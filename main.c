@@ -5,6 +5,28 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+typedef struct
+{
+	unsigned int banco;
+	unsigned int sucursal;
+	unsigned int numero; 
+} cuenta;
+
+typedef struct
+{
+	unsigned int id;
+	cuenta* cuentas;
+} sucursal;
+
+typedef struct
+{
+	unsigned int id;
+	cuenta* origen;
+	cuenta* destino;
+	unsigned int monto;
+	char[20] er-ex;
+} movimiento;
+
 // Cuenten con este codigo monolitico en una funcion
 // main como punto de partida.
 // Idealmente, el codigo del programa deberia estar

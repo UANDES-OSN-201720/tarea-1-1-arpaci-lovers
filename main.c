@@ -24,7 +24,7 @@ typedef struct
 	cuenta* origen;
 	cuenta* destino;
 	unsigned int monto;
-	char[20] er-ex;
+	char erex[20];
 } movimiento;
 
 // Cuenten con este codigo monolitico en una funcion
@@ -67,26 +67,42 @@ int main(int argc, char** argv) {
       // es potencialmente peligroso, dado que accidentalmente
       // pueden iniciarse procesos sin control.
       // Buscar en Google "fork bomb"
+      char strnum[512];
+      strcpy(strnum, "None");
+      if (strlen(commandBuf)> strlen("init")){
+        strcpy(strnum, "");
+        int j = 0;
+        for (int i=strlen("init")+1;i<strlen(commandBuf);i++){
+          if (commandBuf[i]!=0){
+            strnum[j] = commandBuf[i];
+            j++;
+          }
+        }
+      }
       pid_t sucid = fork();
 
       if (sucid > 0) {
         printf("Sucursal creada con ID '%d'\n", sucid);
 
         // Enviando saludo a la sucursal
-        char msg[] = "Hola sucursal, como estas?";
-        write(bankPipe[1], msg, (strlen(msg)+1));
+        write(bankPipe[1], strnum, (strlen(strnum)+1));
 
         continue;
       }
       // Proceso de sucursal
       else if (!sucid) {
+        int accNumber = 1000;
         int sucId = getpid() % 1000;
-        printf("Hola, soy la sucursal '%d'\n", sucId);
+        printf("\nHola, soy la sucursal '%d'\n", sucId);
+        int bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
+        if (strncmp("None", readbuffer, strlen("None"))!=0){
+          accNumber = atoi(readbuffer);
+        }
+        printf("Tengo '%d' cuentas\n", accNumber);
         while (true) {
           // 100 milisegundos...
-          int bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
-          printf("Soy la sucursal '%d' y me llego mensaje '%s' de '%d' bytes.\n",
-            sucId, readbuffer, bytes);
+          bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
+          printf("Soy la sucursal '%d'\n", sucId);
 
           // Usar usleep para dormir una cantidad de microsegundos
           // usleep(100000);

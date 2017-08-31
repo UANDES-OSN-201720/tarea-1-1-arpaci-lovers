@@ -4,28 +4,38 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <time.h>
+
+int random_time(){
+    srand(time(NULL));
+    int t = (rand() % (500001 - 100000)) + 100000;
+    return t;
+}
 
 typedef struct
 {
 	unsigned int banco;
 	unsigned int sucursal;
 	unsigned int numero; 
+  unsigned int saldo;
 } cuenta;
 
 typedef struct
 {
 	unsigned int id;
-	cuenta* cuentas;
-} sucursal;
+	cuenta origen;
+	cuenta destino;
+	unsigned int monto;
+	char erex[20];
+} movimiento;
 
 typedef struct
 {
 	unsigned int id;
-	cuenta* origen;
-	cuenta* destino;
-	unsigned int monto;
-	char erex[20];
-} movimiento;
+	cuenta* cuentas;
+  movimiento* movimientos;
+} sucursal;
+
 
 // Cuenten con este codigo monolitico en una funcion
 // main como punto de partida.
@@ -67,7 +77,8 @@ int main(int argc, char** argv) {
       // es potencialmente peligroso, dado que accidentalmente
       // pueden iniciarse procesos sin control.
       // Buscar en Google "fork bomb"
-      char strnum[512];
+
+      char strnum[512]; //Cantidad de cuentas ingresadas por el usuario, si es que lo hizo.
       strcpy(strnum, "None");
       if (strlen(commandBuf)> strlen("init")){
         strcpy(strnum, "");
@@ -84,7 +95,7 @@ int main(int argc, char** argv) {
       if (sucid > 0) {
         printf("Sucursal creada con ID '%d'\n", sucid);
 
-        // Enviando saludo a la sucursal
+        // Enviando cantidad de cuentas a la sucursal a la sucursal
         write(bankPipe[1], strnum, (strlen(strnum)+1));
 
         continue;
@@ -99,21 +110,29 @@ int main(int argc, char** argv) {
           accNumber = atoi(readbuffer);
         }
         printf("Tengo '%d' cuentas\n", accNumber);
+
+        //ACA SE TIENEN QUE CREAR LAS CUENTAS
+        
         while (true) {
           // 100 milisegundos...
           bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
-          printf("Soy la sucursal '%d'\n", sucId);
+          printf("Soy la sucursal '%d' y leí el mensaje: '%s'\n", sucId, readbuffer);
+          
+          //Ejecuta lo que le dice el mensaje
+          
+          if (!strncmp("kill", readbuffer, strlen("kill"))){
+            // Cerrar lado de lectura del pipe
+            close(bankPipe[0]);
+
+            // Para terminar, el proceso hijo debe llamar a _exit,
+            // debido a razones documentadas aqui:
+            // https://goo.gl/Yxyuxb
+            _exit(EXIT_SUCCESS);
+          }
 
           // Usar usleep para dormir una cantidad de microsegundos
-          // usleep(100000);
+          usleep(random_time());
 
-          // Cerrar lado de lectura del pipe
-          close(bankPipe[0]);
-
-          // Para terminar, el proceso hijo debe llamar a _exit,
-          // debido a razones documentadas aqui:
-          // https://goo.gl/Yxyuxb
-          _exit(EXIT_SUCCESS);
         }
       }
       // error
@@ -122,10 +141,29 @@ int main(int argc, char** argv) {
         return (EXIT_FAILURE);
       }
     }
+    else if (!strncmp("kill", commandBuf, strlen("kill"))) {
+      //Se elimina sucursal especificada.
+      printf("Matar proceso\n");
+    }
+    else if (!strncmp("list", commandBuf, strlen("list"))) {
+      //Se imprime lista de movimientos en la sucursal
+      printf("Lista:\n");
+    }
+    else if (!strncmp("dump_errs", commandBuf, strlen("dump_errs"))) {
+      //Creación archivo csv de movimientos fallidos en una sucursal
+      printf("Archivo creado\n");
+    }
+    else if (!strncmp("dump_accs", commandBuf, strlen("dump_accs"))) {
+      //Creación archivo csv de cuentas en una sucursal
+      printf("Archivo creado\n");
+    }
+    else if (!strncmp("dump", commandBuf, strlen("dump"))) {
+      //Creación archivo csv de movimientos en una sucursal
+      printf("Archivo creado\n");
+    }
     else {
       fprintf(stderr, "Comando no reconocido.\n");
     }
-    // Implementar a continuacion los otros comandos
   }
 
   printf("Terminando ejecucion limpiamente...\n");

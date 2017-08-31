@@ -26,7 +26,7 @@ typedef struct
 	cuenta origen;
 	cuenta destino;
 	unsigned int monto;
-	char erex[20];
+	unsigned int erex; //0 para error, 1 para exito
 } movimiento;
 
 typedef struct
@@ -47,6 +47,7 @@ typedef struct
 int main(int argc, char** argv) {
   size_t bufsize = 512;
   char* commandBuf = malloc(sizeof(char)*bufsize);
+  char** cuentas;
 
   // Para guardar descriptores de pipe
   // el elemento 0 es para lectura

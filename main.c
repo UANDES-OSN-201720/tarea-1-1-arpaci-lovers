@@ -29,13 +29,6 @@ typedef struct
 	unsigned int erex; //0 para error, 1 para exito
 } movimiento;
 
-typedef struct
-{
-	unsigned int id;
-	cuenta* cuentas;
-  movimiento* movimientos;
-} sucursal;
-
 
 // Cuenten con este codigo monolitico en una funcion
 // main como punto de partida.
@@ -48,6 +41,7 @@ int main(int argc, char** argv) {
   size_t bufsize = 512;
   char* commandBuf = malloc(sizeof(char)*bufsize);
   char** cuentas;
+  int* sucursales;
 
   // Para guardar descriptores de pipe
   // el elemento 0 es para lectura
@@ -101,8 +95,10 @@ int main(int argc, char** argv) {
 
         continue;
       }
-      // Proceso de sucursal
+      // Proceso de sucursal-----------------------------------------------
       else if (!sucid) {
+        int total_cuentas;
+        cuenta* cuentas;
         int accNumber = 1000;
         int sucId = getpid() % 1000;
         printf("\nHola, soy la sucursal '%d'\n", sucId);
@@ -147,10 +143,38 @@ int main(int argc, char** argv) {
       printf("Matar proceso\n");
     }
     else if (!strncmp("list", commandBuf, strlen("list"))) {
-      //Se imprime lista de movimientos en la sucursal
-      printf("Lista:\n");
+      if (sucursales[0]!='\0' && cuentas[0][0]!='\0'){
+        //Se imprime lista de movimientos en la sucursal
+        printf("Lista:\n");
+        printf("Sucursal\t|n° inicial\t|n° final\t|cuentas totales\n");
+        for (int s=0;s<sizeof(sucursales);s++){
+          char id[3];
+          sprintf(id, "%d", sucursales[s]);
+          for (int j=0; j<sizeof(cuentas); j++){
+            if (!strncmp(id, cuentas[j], strlen(id))){
+              //Armar string
+              printf("hi\n");
+            }
+          }
+        }
+      }
     }
     else if (!strncmp("dump_errs", commandBuf, strlen("dump_errs"))) {
+      printf("In dump_errs\n");
+      if (strlen(commandBuf)> strlen("dump_errs")){
+        char strnum[4];
+        strcpy(strnum, "");
+        printf("strnum: %s\n", strnum);
+        int j = 0;
+        for (int i=strlen("dump_errs")+1;i<strlen(commandBuf);i++){
+          if (commandBuf[i]!=0){
+            strnum[j] = commandBuf[i];
+            j++;
+          }
+        }
+        int num = atoi(strnum);
+        printf("%d\n",num);
+      }
       //Creación archivo csv de movimientos fallidos en una sucursal
       printf("Archivo creado\n");
     }

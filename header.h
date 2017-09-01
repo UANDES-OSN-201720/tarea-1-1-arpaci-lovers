@@ -12,6 +12,7 @@ typedef struct
 	int sucursal;
 	int numero; 
 	int saldo;
+	char* codigo;
 } cuenta;
 
 typedef struct

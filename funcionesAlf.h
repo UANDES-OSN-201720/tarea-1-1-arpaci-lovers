@@ -1,22 +1,60 @@
 #include "header.h"
 
-void crear_cuentas(int n_cuentas, pid_t sucid, cuenta** cuentas)
+void crear_cuentas(int n_cuentas, pid_t bancid, pid_t sucid, cuenta** cuentas)
 {
     for(int i=0;i<n_cuentas;i++){
-      cuenta* c = malloc(sizeof(cuenta));
-      c->sucursal = sucid % 1000;
-      c->numero = i;
-      c->saldo = (rand() % 4999000)+1000;
-      *cuentas[i] = c;
+    	cuenta* c = malloc(sizeof(cuenta));
+      	c->sucursal = sucid % 1000;
+      	c->numero = i;
+      	c->saldo = (rand() % 4999000)+1000;
+      	c->codigo = malloc(17*sizeof(char));
+      	int u = (int)bancid;
+	  	int itedaror = 0;
+	  	int digito_size = 5;
+	  	while (u > (int)pow(10, digito_size)) digito_size--;
+	  	while (u >= 0){
+			c->codigo[itedaror] = (u/(int)pow(10, digito_size))+'0';
+			u = u%(int)pow(10, digito_size);
+			itedaror++;
+			digito_size--;
+			if (digito_size < 0){
+				u = -1;
+				break;
+			}
+		}
+      	int suc = c->sucursal;
+      	c->codigo[6] = '-';
+	  	c->codigo[7] = (suc/100)+'0';
+	  	c->codigo[8] = ((suc%100)/10)+'0';
+	  	c->codigo[9] = (suc%10)+'0';
+	  	c->codigo[10] = '-';
+	  	int cu = c->numero;
+	  	int iterator = 11;
+	  	int digit_size = 5;
+	 	while (cu > (int)pow(10, digit_size)) digit_size--;
+	  	while (cu >= 0){
+			c->codigo[iterator] = (cu/(int)pow(10, digit_size))+'0';
+			cu = cu%(int)pow(10, digit_size);
+			iterator++;
+			digit_size--;
+			if (digit_size < 0){
+				cu = -1;
+				break;
+			}
+		}
+
+      	cuentas[i] = c;
+
+      	printf("- %s: $%d\n", c->codigo, c->saldo);
     }
 }
 
-char* codificar_desde_sucursal(cuenta* cuenta, int monto)
+char* codificar_desde_sucursal(char operacion, cuenta* cuenta, int monto)
 {
 	char* retorno;
 	retorno = malloc(64*sizeof(char*));
 
-	retorno[0] = 'd';
+	retorno[0] = operacion;
 	retorno[1] = '-';
 
 	int suc = cuenta->sucursal;
@@ -59,6 +97,4 @@ char* codificar_desde_sucursal(cuenta* cuenta, int monto)
 	retorno[iterator] = '\0';
 
 	return retorno;
-
-
 }

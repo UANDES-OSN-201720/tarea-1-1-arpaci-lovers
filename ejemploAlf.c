@@ -25,34 +25,45 @@ int main()
 	int monto_a_depositar = 9000;
 	if (cuentaMaca->saldo >= monto_a_depositar)
 	{
-		printf("%s\n",codificar_desde_sucursal('d', cuentaMaca, 2, 9000));
+		char* mensaje_a_enviar = codificar_desde_sucursal('d', cuentaMaca, 2, 9000);
+		printf("Sucursal de Maca envia:  %s\n", mensaje_a_enviar);
 		//Este string se envia por pipe a la casa matriz y ésta la se pasa
-		//al proceso SUCURSAL-ALF.
+		//al proceso SUCURSAL-ALF, basandose en el numero presente en el tercer paramtro
+		//de la funcion (que en la practica seria aleatorio).
 	}
 	else
 	{
-		//Mostrar muestra un mensaje de error
+		char* mensaje_de_error = codificar_desde_sucursal_con_resultado('d', cuentaMaca, cuentaMaca, 9000, 'f');
+		printf("Sucursal de Maca envia:  %s\n", mensaje_de_error);
+		//Aca se envia el error a la casa matriz donde crea el struct de 
+		//la transacción fallida.
 	}
 	
 	//Proceso SUCURSAL-ALF
 		/*
-		La sucursal de Alf recibe el mensaje y busca si la cuenta de Alf
-		//existe, luego suma la plata a la cuenta de Alf y envia mensaje
-		de vuelta indicando que la transacción fue un exito.
+		La sucursal de Alf recibe el mensajey luego suma la plata a 
+		la cuenta de Alf. Luego envia un mensaje de vuelta indicando que
+		la transacción fue un exito.
 		*/
 	cuentaAlf->saldo =cuentaAlf->saldo + monto_a_depositar;
-	printf("%s\n\n",codificar_desde_sucursal_con_resultado('d', cuentaMaca, cuentaAlf, 9000, 'e'));
+	char* mensaje_de_exito = codificar_desde_sucursal_con_resultado('d', cuentaMaca, cuentaAlf, 9000, 'e');
+	printf("Sucursal de Alf envia:   %s\n", mensaje_de_exito);
 
 	//Proceso SUCURSAL-MACA
 		/*
-		La sucursal de Maca recibe este mensaje de exito (el parametro 'e')
-		de la función y descuenta el monto de su cuenta.
+		La sucursal de Maca recibe este mensaje de exito de la función y
+		descuenta el monto de su cuenta.
 		*/
-	//Si el parametro de la funcion es 'e', implica exito y debe resatarse el
-	//monto depositado.
+		
 	cuentaMaca->saldo = cuentaMaca->saldo - monto_a_depositar;
-	//Si es 'f', entonces no se debe hacer el retiro de fondos.
 
+	//Proceso PADRE (Casa Matriz)
+		/*
+		Se le debe enviar un mensaje de exito de vuelta a la casa matriz para
+		que se encargue de documentar la información del proceso.
+		*/
+	char* mensaje_a_documentar = codificar_desde_sucursal_con_resultado('r', cuentaMaca, cuentaAlf, 9000, 'e');
+	printf("Sucursal de Alf envia a la caza matriz para documentar:  %s\n\n", mensaje_a_documentar);
 
 	cuenta** cuentas = malloc(sizeof(**cuentas));
 	crear_cuentas(10, (pid_t)8574, (pid_t)857, cuentas);

@@ -105,6 +105,8 @@ char* codificar_desde_sucursal(char operacion, cuenta* cuenta, int aleatorio, in
 
 char* codificar_desde_sucursal_con_resultado(char operacion, cuenta* cuentaEmisor, cuenta* cuentaReceptor, int monto, char resultado)
 {
+	//Si el ultimo parametro de la funcion es 'e', implica exito.
+	//De lo contrario, debe entregarse una 'f' indicando fracaso.
 	char* retorno;
 	retorno = malloc(64*sizeof(char*));
 
@@ -116,6 +118,10 @@ char* codificar_desde_sucursal_con_resultado(char operacion, cuenta* cuentaEmiso
 	}
 	retorno[18] = '-';
 	retorno[19] = '-';
+	/*
+	OJO aca que la division entre ambas cuentas esta delimitada
+	por dos guiones en lugar de uno.
+	*/
 	for (int i=0;i<17;i++)
 	{
 		retorno[i+20] = cuentaReceptor->codigo[i];

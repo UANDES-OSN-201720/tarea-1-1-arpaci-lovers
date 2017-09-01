@@ -18,12 +18,6 @@ typedef struct
 typedef struct
 {
 	unsigned int id;
-	cuenta* cuentas;
-} sucursal;
-
-typedef struct
-{
-	unsigned int id;
 	cuenta* origen;
 	cuenta* destino;
 	unsigned int monto;

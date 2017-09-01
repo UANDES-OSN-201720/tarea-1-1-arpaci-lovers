@@ -7,16 +7,16 @@ void crear_cuentas(int n_cuentas, pid_t sucid, cuenta** cuentas)
       c->sucursal = sucid % 1000;
       c->numero = i;
       c->saldo = (rand() % 4999000)+1000;
-      *cuentas[i] = c;
+      cuentas[i] = c;
     }
 }
 
-char* codificar_desde_sucursal(cuenta* cuenta, int monto)
+char* codificar_desde_sucursal(char operacion, cuenta* cuenta, int monto)
 {
 	char* retorno;
 	retorno = malloc(64*sizeof(char*));
 
-	retorno[0] = 'd';
+	retorno[0] = operacion;
 	retorno[1] = '-';
 
 	int suc = cuenta->sucursal;

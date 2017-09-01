@@ -62,11 +62,19 @@ int main()
 		Se le debe enviar un mensaje de exito de vuelta a la casa matriz para
 		que se encargue de documentar la información del proceso.
 		*/
-	char* mensaje_a_documentar = codificar_desde_sucursal_con_resultado('r', cuentaMaca, cuentaAlf, 9000, 'e');
+	char* mensaje_a_documentar = codificar_desde_sucursal_con_resultado('o', cuentaMaca, cuentaAlf, 9000, 'e');
 	printf("Sucursal de Alf envia a la caza matriz para documentar:  %s\n\n", mensaje_a_documentar);
 
-	cuenta** cuentas = malloc(sizeof(**cuentas));
-	crear_cuentas(10, (pid_t)8574, (pid_t)857, cuentas);
+	movimiento* resumen = crear_movimiento(mensaje_a_documentar);
+	printf("RESUMEN DE LA OPERACION:\n");
+	printf("\t%s\n", resumen->tipo);
+	printf("\t%s\n", resumen->origen);
+	printf("\t%s\n", resumen->destino);
+	printf("\t%d\n", resumen->monto);
+	printf("\t%s\n", resumen->er_ex);
+
+	//cuenta** cuentas = malloc(sizeof(**cuentas));
+	//crear_cuentas(10, (pid_t)8574, (pid_t)857, cuentas);
 
 	return 0;
 }

@@ -109,26 +109,28 @@ char* codificar_desde_sucursal_con_resultado(char operacion, cuenta* cuentaEmiso
 	//De lo contrario, debe entregarse una 'f' indicando fracaso.
 	char* retorno;
 	retorno = malloc(64*sizeof(char*));
-
+	//Si se desea enviar a la casa matriz para documentar, poner
+	//operacion = 'o' si se trato de un deposito, y poner 'i' en caso de
+	//haberse tratado de un retiro.
 	retorno[0] = operacion;
 	retorno[1] = '-';
 	for (int i=0;i<17;i++)
 	{
 		retorno[i+2] = cuentaEmisor->codigo[i];
 	}
-	retorno[18] = '-';
 	retorno[19] = '-';
+	retorno[20] = '-';
 	/*
 	OJO aca que la division entre ambas cuentas esta delimitada
 	por dos guiones en lugar de uno.
 	*/
 	for (int i=0;i<17;i++)
 	{
-		retorno[i+20] = cuentaReceptor->codigo[i];
+		retorno[i+21] = cuentaReceptor->codigo[i];
 	}
-	retorno[37] = '-';
+	retorno[38] = '-';
 
-	int iterator = 38;
+	int iterator = 39;
 
 	int mto = monto;
 	int digit_size = 0;
@@ -149,4 +151,70 @@ char* codificar_desde_sucursal_con_resultado(char operacion, cuenta* cuentaEmiso
 	retorno[iterator+2] = '\0';
 
 	return retorno;
+}
+
+movimiento* crear_movimiento(char* mensaje)
+{
+	movimiento* retorno = malloc(sizeof(movimiento));
+
+	if (mensaje[0] == 'o')
+	{
+		retorno->tipo = "Deposito";
+	}
+	else
+	{
+		retorno->tipo = "Retiro";
+	}
+
+	
+
+	char* cuenta_origen = malloc(18*sizeof(char));
+	int iterator = 2;
+	for (int i=0; i<17; i++)
+	{
+		cuenta_origen[i] = mensaje[iterator];
+		iterator++;
+	}
+
+	retorno->origen = cuenta_origen;
+
+	iterator++; iterator++;
+
+	char* cuenta_destino = malloc(17*sizeof(char));
+	for (int i=0; i<17; i++)
+	{
+		cuenta_destino[i] = mensaje[iterator];
+		iterator++;
+	}
+
+	retorno->destino = cuenta_destino;
+
+	iterator++;
+	int other_iterator = 0;
+
+	char aviso = '.';
+	char* monto_movimiento = malloc(10*sizeof(char));;
+	while (aviso != '-')
+	{
+		monto_movimiento[other_iterator] = mensaje[iterator];
+		iterator++; other_iterator++;
+		aviso = mensaje[iterator];
+	}
+	int dinero;
+	sscanf(monto_movimiento, "%d", &dinero);
+	retorno->monto = dinero;
+
+	iterator++;
+
+	if (mensaje[iterator] == 'e')
+	{
+		retorno->er_ex = "Exito";
+	}
+	else
+	{
+		retorno->er_ex = "Fracaso";
+	}
+
+	return retorno;
+
 }

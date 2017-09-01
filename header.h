@@ -17,9 +17,9 @@ typedef struct
 
 typedef struct
 {
-	unsigned int id;
-	cuenta* origen;
-	cuenta* destino;
+	char* tipo;
+	char* origen;
+	char* destino;
 	unsigned int monto;
-	char er_ex[20];
+	char* er_ex;
 } movimiento;

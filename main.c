@@ -6,11 +6,13 @@
 #include <sys/types.h>
 #include <time.h>
 
-int random_time(){
+int random_number(int min, int max){
     srand(time(NULL));
-    int t = (rand() % (500001 - 100000)) + 100000;
+    int t = (rand() % (max + 1 - min)) + min;
     return t;
 }
+
+int dump_input(char *cmd, int *sucursales, char *buff);
 
 typedef struct
 {
@@ -93,7 +95,6 @@ int main(int argc, char** argv) {
         // Enviando cantidad de cuentas a la sucursal a la sucursal
         sucursales = (int *) realloc(sucursales, sizeof(sucursales)+1);
         sucursales[0] = sucid % 1000;
-        printf("Sucursal: %d", sucursales[0]);
         write(bankPipe[1], strnum, (strlen(strnum)+1));
 
         continue;
@@ -131,7 +132,7 @@ int main(int argc, char** argv) {
           }
 
           // Usar usleep para dormir una cantidad de microsegundos
-          usleep(random_time());
+          usleep(random_number(100000, 500000));
 
         }
       }
@@ -162,9 +163,11 @@ int main(int argc, char** argv) {
         }
       }
     }
-    else if (!strncmp("dump_errs", commandBuf, strlen("dump_errs"))) {
+    else if (!strncmp("dump_errs", commandBuf, strlen("dump_errs"))) {    
+      char strnum[4];
+      int num;
+      int exists = 0;
       if (strlen(commandBuf)> strlen("dump_errs")){
-        char strnum[4];
         strcpy(strnum, "");
         int j = 0;
         for (int i=strlen("dump_errs")+1;i<strlen(commandBuf);i++){
@@ -173,24 +176,28 @@ int main(int argc, char** argv) {
             j++;
           }
         }
-        int num = atoi(strnum);
-        printf("%d\n",num);
-        int exists = 0;
-        for (int i=0; i<sizeof(sucursales); i++){
-          if (sucursales[i]==num){
-            exists = 1;
-          }
+        num = atoi(strnum);
+      }
+      else{
+        printf("Especifique sucursal:\n");
+        scanf("%d", &num);
+      }     
+      for (int i=0; i<sizeof(sucursales); i++){
+        if (sucursales[i]==num){
+          exists = 1;
         }
-        if (!exists){
-          printf("La sucursal ingresada no existe.\n");
-        }
+      }
+      if (!exists){
+        printf("La sucursal ingresada no existe.\n");
       }
       //Creación archivo csv de movimientos fallidos en una sucursal
       printf("Archivo creado\n");
     }
     else if (!strncmp("dump_accs", commandBuf, strlen("dump_accs"))) {
+      char strnum[4];
+      int num;
+      int exists = 0;
       if (strlen(commandBuf)> strlen("dump_accs")){
-        char strnum[4];
         strcpy(strnum, "");
         int j = 0;
         for (int i=strlen("dump_accs")+1;i<strlen(commandBuf);i++){
@@ -199,10 +206,21 @@ int main(int argc, char** argv) {
             j++;
           }
         }
-        int num = atoi(strnum);
-        printf("%d\n",num);
+        num = atoi(strnum);
       }
-      //Creación archivo csv de cuentas en una sucursal
+      else{
+        printf("Especifique sucursal:\n");
+        scanf("%d", &num);
+      }     
+      for (int i=0; i<sizeof(sucursales); i++){
+        if (sucursales[i]==num){
+          exists = 1;
+        }
+      }
+      if (!exists){
+        printf("La sucursal ingresada no existe.\n");
+      }
+      //Creación archivo csv de movimientos fallidos en una sucursal
       printf("Archivo creado\n");
     }
     else if (!strncmp("dump", commandBuf, strlen("dump"))) {

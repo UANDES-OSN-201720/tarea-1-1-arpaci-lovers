@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
   size_t bufsize = 512;
   char* commandBuf = malloc(sizeof(char)*bufsize);
   char** cuentas;
-  int* sucursales;
+  int* sucursales = malloc(sizeof(sucursales));
 
   // Para guardar descriptores de pipe
   // el elemento 0 es para lectura
@@ -91,6 +91,9 @@ int main(int argc, char** argv) {
         printf("Sucursal creada con ID '%d'\n", sucid);
 
         // Enviando cantidad de cuentas a la sucursal a la sucursal
+        sucursales = (int *) realloc(sucursales, sizeof(sucursales)+1);
+        sucursales[0] = sucid % 1000;
+        printf("Sucursal: %d", sucursales[0]);
         write(bankPipe[1], strnum, (strlen(strnum)+1));
 
         continue;
@@ -143,7 +146,7 @@ int main(int argc, char** argv) {
       printf("Matar proceso\n");
     }
     else if (!strncmp("list", commandBuf, strlen("list"))) {
-      if (sucursales[0]!='\0' && cuentas[0][0]!='\0'){
+      if (isdigit(sucursales[0]) && isdigit(atoi(cuentas[0][0]))){
         //Se imprime lista de movimientos en la sucursal
         printf("Lista:\n");
         printf("Sucursal\t|n° inicial\t|n° final\t|cuentas totales\n");
@@ -160,11 +163,9 @@ int main(int argc, char** argv) {
       }
     }
     else if (!strncmp("dump_errs", commandBuf, strlen("dump_errs"))) {
-      printf("In dump_errs\n");
       if (strlen(commandBuf)> strlen("dump_errs")){
         char strnum[4];
         strcpy(strnum, "");
-        printf("strnum: %s\n", strnum);
         int j = 0;
         for (int i=strlen("dump_errs")+1;i<strlen(commandBuf);i++){
           if (commandBuf[i]!=0){
@@ -174,11 +175,33 @@ int main(int argc, char** argv) {
         }
         int num = atoi(strnum);
         printf("%d\n",num);
+        int exists = 0;
+        for (int i=0; i<sizeof(sucursales); i++){
+          if (sucursales[i]==num){
+            exists = 1;
+          }
+        }
+        if (!exists){
+          printf("La sucursal ingresada no existe.\n");
+        }
       }
       //Creación archivo csv de movimientos fallidos en una sucursal
       printf("Archivo creado\n");
     }
     else if (!strncmp("dump_accs", commandBuf, strlen("dump_accs"))) {
+      if (strlen(commandBuf)> strlen("dump_accs")){
+        char strnum[4];
+        strcpy(strnum, "");
+        int j = 0;
+        for (int i=strlen("dump_accs")+1;i<strlen(commandBuf);i++){
+          if (commandBuf[i]!=0){
+            strnum[j] = commandBuf[i];
+            j++;
+          }
+        }
+        int num = atoi(strnum);
+        printf("%d\n",num);
+      }
       //Creación archivo csv de cuentas en una sucursal
       printf("Archivo creado\n");
     }
@@ -194,6 +217,7 @@ int main(int argc, char** argv) {
   printf("Terminando ejecucion limpiamente...\n");
   // Cerrar lado de escritura del pipe
   close(bankPipe[1]);
+  free(sucursales);
 
   return(EXIT_SUCCESS);
 }

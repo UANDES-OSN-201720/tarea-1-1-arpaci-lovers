@@ -23,3 +23,9 @@ typedef struct
 	unsigned int monto;
 	char* er_ex;
 } movimiento;
+
+int random_number(int min, int max){
+    srand(time(NULL));
+    int t = (rand() % (max + 1 - min)) + min;
+    return t;
+}

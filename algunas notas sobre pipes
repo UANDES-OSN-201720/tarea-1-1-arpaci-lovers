@@ -1,0 +1,4 @@
+acerca de pipes
+voy a crear un struct con un puntero al pipe para cada hijo, porque lo que tenemos ahora es un pipe que habla con unn hijo, y el resto no habla porque ese pipe no esta asociado a ellos
+para poder hablar con los hijos debe haber un par de pipes por proceso.
+para evitar deadlocks, el padre al inicio de ciclo siempre escribe, porque la terminal espera un comando y el proceso esta en wait hasta que se escriba algo, entonces los gijos primero deben leer, luego producen cuentas, luego transacciones con escritura.

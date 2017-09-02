@@ -3,11 +3,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <time.h>
+#include <math.h>
+#include <sys/types.h>
+
+srand(time(NULL));
 
 int random_number(int min, int max){
-    srand(time(NULL));
     int t = (rand() % (max + 1 - min)) + min;
     return t;
 }

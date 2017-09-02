@@ -6,7 +6,7 @@ void crear_cuentas(int n_cuentas, pid_t bancid, pid_t sucid, cuenta** cuentas)
 		cuenta* c = malloc(sizeof(cuenta));
 		c->sucursal = sucid % 1000;
 		c->numero = i;
-		c->saldo = (rand() % 4999000)+1000;
+		c->saldo = random_number(1000, 500000000);
 		c->codigo = malloc(17*sizeof(char));
       	int u = (int)bancid;
 		int itedaror = 0;

@@ -73,8 +73,8 @@ int main()
 	printf("\t%d\n", resumen->monto);
 	printf("\t%s\n", resumen->er_ex);
 
-	//cuenta** cuentas = malloc(sizeof(**cuentas));
-	//crear_cuentas(10, (pid_t)8574, (pid_t)857, cuentas);
+	cuenta** cuentas = malloc(sizeof(**cuentas));
+	crear_cuentas(10, (pid_t)8574, (pid_t)857, cuentas);
 
 	return 0;
 }

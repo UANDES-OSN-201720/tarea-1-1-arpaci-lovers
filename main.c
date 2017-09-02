@@ -12,7 +12,36 @@ int random_number(int min, int max){
     return t;
 }
 
-int dump_input(char *cmd, int *sucursales, char *buff);
+int dump_input(char *cmd, int *sucursales, char *buff){
+  char strnum[4];
+  int num;
+  int exists = 0;
+  if (strlen(buff)> strlen(cmd)){
+    strcpy(strnum, "");
+    int j = 0;
+    for (int i=strlen(cmd)+1;i<strlen(buff);i++){
+      if (buff[i]!=0){
+        strnum[j] = buff[i];
+        j++;
+      }
+    }
+    num = atoi(strnum);
+  }
+  else{
+    printf("Especifique sucursal:\n");
+    scanf("%d", &num);
+  }     
+  for (int i=0; i<sizeof(sucursales); i++){
+    if (sucursales[i]==num){
+      exists = 1;
+    }
+  }
+  if (!exists){
+    printf("La sucursal ingresada no existe.\n");
+  }
+  return num;
+}
+
 
 typedef struct
 {
@@ -164,66 +193,17 @@ int main(int argc, char** argv) {
       }
     }
     else if (!strncmp("dump_errs", commandBuf, strlen("dump_errs"))) {    
-      char strnum[4];
-      int num;
-      int exists = 0;
-      if (strlen(commandBuf)> strlen("dump_errs")){
-        strcpy(strnum, "");
-        int j = 0;
-        for (int i=strlen("dump_errs")+1;i<strlen(commandBuf);i++){
-          if (commandBuf[i]!=0){
-            strnum[j] = commandBuf[i];
-            j++;
-          }
-        }
-        num = atoi(strnum);
-      }
-      else{
-        printf("Especifique sucursal:\n");
-        scanf("%d", &num);
-      }     
-      for (int i=0; i<sizeof(sucursales); i++){
-        if (sucursales[i]==num){
-          exists = 1;
-        }
-      }
-      if (!exists){
-        printf("La sucursal ingresada no existe.\n");
-      }
+      int num = dump_input("dump_accs", sucursales, commandBuf);
       //Creación archivo csv de movimientos fallidos en una sucursal
       printf("Archivo creado\n");
     }
     else if (!strncmp("dump_accs", commandBuf, strlen("dump_accs"))) {
-      char strnum[4];
-      int num;
-      int exists = 0;
-      if (strlen(commandBuf)> strlen("dump_accs")){
-        strcpy(strnum, "");
-        int j = 0;
-        for (int i=strlen("dump_accs")+1;i<strlen(commandBuf);i++){
-          if (commandBuf[i]!=0){
-            strnum[j] = commandBuf[i];
-            j++;
-          }
-        }
-        num = atoi(strnum);
-      }
-      else{
-        printf("Especifique sucursal:\n");
-        scanf("%d", &num);
-      }     
-      for (int i=0; i<sizeof(sucursales); i++){
-        if (sucursales[i]==num){
-          exists = 1;
-        }
-      }
-      if (!exists){
-        printf("La sucursal ingresada no existe.\n");
-      }
+      int num = dump_input("dump_accs", sucursales, commandBuf);
       //Creación archivo csv de movimientos fallidos en una sucursal
       printf("Archivo creado\n");
     }
     else if (!strncmp("dump", commandBuf, strlen("dump"))) {
+      int num = dump_input("dump_accs", sucursales, commandBuf);
       //Creación archivo csv de movimientos en una sucursal
       printf("Archivo creado\n");
     }

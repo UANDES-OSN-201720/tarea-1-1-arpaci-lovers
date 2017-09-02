@@ -1,7 +1,5 @@
 #include "header.h"
 
-srand(time(NULL));
-
 int dump_input(char *cmd, int *sucursales, char *buff){
   char strnum[4];
   int num;
@@ -41,9 +39,10 @@ int dump_input(char *cmd, int *sucursales, char *buff){
 // distribuidas en headers. Pueden modificar el Makefile
 // libremente para lograr esto.
 int main(int argc, char** argv) {
+  srand(time(NULL));
   size_t bufsize = 512;
   char* commandBuf = malloc(sizeof(char)*bufsize);
-  char** cuentas;
+  char** cuentas = malloc(sizeof(char**));
   int* sucursales = malloc(sizeof(sucursales));
   movimiento* movimientos = malloc(sizeof(movimiento));
 

@@ -210,11 +210,78 @@ movimiento* crear_movimiento(char* mensaje)
 	{
 		retorno->er_ex = "Exito";
 	}
+	else if (mensaje[iterator] == 'f')
+	{
+		retorno->er_ex = "Fracaso por falta de fondos";
+	}
 	else
 	{
-		retorno->er_ex = "Fracaso";
+		retorno->er_ex = "Fracaso por cuenta inexistente";
 	}
 
 	return retorno;
 
+}
+
+void dump_csv(movimiento* movimientos, int sucid)
+{
+	//Primero buscamos el largo del arreglo de movimientos
+	int movimientos_totales = sizeof(*movimientos)/sizeof(movimiento);
+
+	FILE *fp;
+	fp = fopen("dump_PID.csv", "w+");
+	fprintf(fp, "Tipo de transacción,Medio de origen,Cuenta de origen,Cuenta de destino\n");
+	//Luego empezamos a recorrer todos los movimientos para ir registrando.
+	for (int i=0; i<movimientos_totales; i++)
+	{
+		char* linea = malloc(sizeof(char));
+		int iterator = 0;
+		for (int j=0; j<sizeof(movimientos[i]->tipo); j++)
+		{
+			linea[iterator] = movimientos[i]->tipo[j];
+			iterator++;
+			linea = realloc(linea, iterator+1);
+		}
+
+		linea[iterator] = ',';
+		iterator++;
+		linea = realloc(linea, iterator+1);
+
+		//ACA FALTA EL MEDIO DE ORIGEN
+		/*for (int j=0; j<sizeof(movimientos[i]->origen); j++)
+		{
+			linea[iterator] = movimientos[i]->origen[j];
+			iterator++;
+			linea = realloc(linea, iterator+1);
+		}
+
+		linea[iterator] = ',';
+		iterator++;
+		linea = realloc(linea, iterator+1);*/
+
+		for (int j=0; j<sizeof(movimientos[i]->origen); j++)
+		{
+			linea[iterator] = movimientos[i]->origen[j];
+			iterator++;
+			linea = realloc(linea, iterator+1);
+		}
+
+		linea[iterator] = ',';
+		iterator++;
+		linea = realloc(linea, iterator+1);
+
+		for (int j=0; j<sizeof(movimientos[i]->destino); j++)
+		{
+			linea[iterator] = movimientos[i]->destino[j];
+			iterator++;
+			linea = realloc(linea, iterator+1);
+		}
+
+		linea[iterator] = '\0';
+		iterator++;
+
+		fprintf(fp,linea);
+	}
+
+	fclose(fp);
 }

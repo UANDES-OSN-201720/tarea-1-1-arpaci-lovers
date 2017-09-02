@@ -3,14 +3,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <time.h>
+#include <math.h>
+#include <sys/types.h>
 
-int random_number(int min, int max){
-    srand(time(NULL));
-    int t = (rand() % (max + 1 - min)) + min;
-    return t;
-}
+srand(time(NULL));
 
 int dump_input(char *cmd, int *sucursales, char *buff){
   char strnum[4];

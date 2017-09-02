@@ -9,13 +9,13 @@ void crear_cuentas(int n_cuentas, pid_t bancid, pid_t sucid, cuenta** cuentas)
 		c->saldo = random_number(1000, 500000000);
 		c->codigo = malloc(17*sizeof(char));
       	int u = (int)bancid;
-		int itedaror = 0;
+		int iterator = 0;
 		int digito_size = 5;
 		while (u > (int)pow(10, digito_size)) digito_size--;
 		while (u >= 0){
-			c->codigo[itedaror] = (u/(int)pow(10, digito_size))+'0';
+			c->codigo[iterator] = (u/(int)pow(10, digito_size))+'0';
 			u = u%(int)pow(10, digito_size);
-			itedaror++;
+			iterator++;
 			digito_size--;
 			if (digito_size < 0){
 				u = -1;
@@ -29,7 +29,7 @@ void crear_cuentas(int n_cuentas, pid_t bancid, pid_t sucid, cuenta** cuentas)
 	  	c->codigo[9] = (suc%10)+'0';
 	  	c->codigo[10] = '-';
 	  	int cu = c->numero;
-	  	int iterator = 11;
+	  	iterator = 11;
 	  	int digit_size = 5;
 	 	while (cu > (int)pow(10, digit_size)) digit_size--;
 	  	while (cu >= 0){
@@ -223,7 +223,7 @@ movimiento* crear_movimiento(char* mensaje)
 
 }
 
-void dump_csv(movimiento* movimientos, int sucid)
+void dump_csv(movimiento** movimientos, int sucid)
 {
 	//Primero buscamos el largo del arreglo de movimientos
 	int movimientos_totales = sizeof(*movimientos)/sizeof(movimiento);

@@ -9,11 +9,6 @@
 
 srand(time(NULL));
 
-int random_number(int min, int max){
-    int t = (rand() % (max + 1 - min)) + min;
-    return t;
-}
-
 int dump_input(char *cmd, int *sucursales, char *buff){
   char strnum[4];
   int num;

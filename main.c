@@ -73,6 +73,7 @@ int main(int argc, char** argv) {
   char* commandBuf = malloc(sizeof(char)*bufsize);
   char** cuentas;
   int* sucursales = malloc(sizeof(sucursales));
+  movimiento* movimientos = malloc(sizeof(movimiento));
 
   // Para guardar descriptores de pipe
   // el elemento 0 es para lectura
@@ -136,6 +137,7 @@ int main(int argc, char** argv) {
         int sucId = getpid() % 1000;
         printf("\nHola, soy la sucursal '%d'\n", sucId);
         int bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
+        printf("%s\n", readbuffer);
         if (strncmp("None", readbuffer, strlen("None"))!=0){
           accNumber = atoi(readbuffer);
         }

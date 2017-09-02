@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-#include <math.h>
-#include <sys/types.h>
+#include "header.h"
 
 srand(time(NULL));
 
@@ -38,24 +31,6 @@ int dump_input(char *cmd, int *sucursales, char *buff){
   }
   return num;
 }
-
-
-typedef struct
-{
-	unsigned int banco;
-	unsigned int sucursal;
-	unsigned int numero; 
-  unsigned int saldo;
-} cuenta;
-
-typedef struct
-{
-	unsigned int id;
-	cuenta origen;
-	cuenta destino;
-	unsigned int monto;
-	unsigned int erex; //0 para error, 1 para exito
-} movimiento;
 
 
 // Cuenten con este codigo monolitico en una funcion

@@ -1,4 +1,5 @@
-#include "header.h"
+
+#include "funcionesAlf.h"
 
 int dump_input(char *cmd, int *sucursales, char *buff){
   char strnum[4];
@@ -43,18 +44,14 @@ int main(int argc, char** argv) {
   size_t bufsize = 512;
   char* commandBuf = malloc(sizeof(char)*bufsize);
   char** cuentas = malloc(sizeof(char**));
-  int* sucursales = malloc(sizeof(sucursales));
-  movimiento* movimientos = malloc(sizeof(movimiento));
-
-  // Para guardar descriptores de pipe
-  // el elemento 0 es para lectura
-  // y el elemento 1 es para escritura.
-  int bankPipe[2];
+  int total_cuentas=0;
+  pid_t* sucursales = malloc(sizeof(sucursales));
+  int total_sucursales = 0;
+  int** pipes = malloc(sizeof(int[2]));
+  
   char readbuffer[80]; // buffer para lectura desde pipe
-
-  // Se crea un pipe...
-  pipe(bankPipe);
-
+  int bankPipe[2];
+  
   const int bankId = getpid() % 1000;
   printf("Bienvenido a Banco '%d'\n", bankId);
 
@@ -75,46 +72,88 @@ int main(int argc, char** argv) {
       // es potencialmente peligroso, dado que accidentalmente
       // pueden iniciarse procesos sin control.
       // Buscar en Google "fork bomb"
-
-      char strnum[512]; //Cantidad de cuentas ingresadas por el usuario, si es que lo hizo.
-      strcpy(strnum, "None");
+      
+      total_sucursales++;
+      pipe(bankPipe);
+      pipes = realloc(pipes, sizeof(int[2])*total_sucursales);
+      pipes[total_sucursales-1] = bankPipe;
+      printf("size of pipes: %d", sizeof(pipes));
+      char* c;
       if (strlen(commandBuf)> strlen("init")){
-        strcpy(strnum, "");
         int j = 0;
+        c = malloc(sizeof(char)*(strlen(commandBuf)-strlen("init")));
         for (int i=strlen("init")+1;i<strlen(commandBuf);i++){
           if (commandBuf[i]!=0){
-            strnum[j] = commandBuf[i];
+            c[j] = commandBuf[i];
             j++;
           }
         }
       }
+      else{
+        c = malloc(sizeof(char)*4);
+        sprintf(c, "1000");
+      }
+      
+      total_cuentas += atoi(c);
+      
+      char *strnum = malloc(sizeof(char)*(3+sizeof(total_cuentas)+strlen(c)));
+      sprintf(strnum, "%d %s", total_cuentas, c);
+      printf("strnum: %s\n", strnum);
       pid_t sucid = fork();
 
       if (sucid > 0) {
         printf("Sucursal creada con ID '%d'\n", sucid);
 
         // Enviando cantidad de cuentas a la sucursal a la sucursal
-        sucursales = (int *) realloc(sucursales, sizeof(sucursales)+1);
-        sucursales[0] = sucid % 1000;
+        sucursales = realloc(sucursales, sizeof(pid_t)*total_sucursales);
+        sucursales[total_sucursales-1] = sucid;
         write(bankPipe[1], strnum, (strlen(strnum)+1));
 
         continue;
       }
       // Proceso de sucursal-----------------------------------------------
       else if (!sucid) {
+        movimiento* movimientos = malloc(sizeof(movimiento));
         int total_cuentas;
-        cuenta* cuentas;
-        int accNumber = 1000;
+        cuenta** cuentas = malloc(sizeof(cuenta*));
+        int cantidad_cuentas = 1000;
         int sucId = getpid() % 1000;
-        printf("\nHola, soy la sucursal '%d'\n", sucId);
+        printf("\n--------------\n");
+        printf("Hola, soy la sucursal '%d'\n", sucId);
         int bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
-        printf("%s\n", readbuffer);
-        if (strncmp("None", readbuffer, strlen("None"))!=0){
-          accNumber = atoi(readbuffer);
+        printf("readbuffer: %s\n", readbuffer);
+        //Sacando la informacion del buffer
+        int i;
+         
+        char *tc = malloc(sizeof(char));
+        int counter = 0;
+        
+        for (i=0;i<strlen(readbuffer);i++){
+          if(readbuffer[i]==' '){
+            counter = 0;
+            break;
+          } else {
+            counter++;
+            tc = realloc(tc, sizeof(char)*counter);
+            tc[counter-1] = readbuffer[i];
+          }
         }
-        printf("Tengo '%d' cuentas\n", accNumber);
+        i++;
+        
+        char *cc = malloc(sizeof(char));
+        for (i; i<strlen(readbuffer);i++){
+          counter++;
+          cc = realloc(cc, sizeof(char)*counter);
+          cc[counter-1] = readbuffer[i];
+        }
+        
+        printf("En sucursal... bID:%d tc:%s cc:%s\n", bankId, tc, cc);
+        
+        cantidad_cuentas = atoi(cc);
+        total_cuentas = atoi(tc);
+        printf("Tengo '%d' cuentas\n", cantidad_cuentas);
 
-        //ACA SE TIENEN QUE CREAR LAS CUENTAS
+        crear_cuentas(cantidad_cuentas, bankId, sucid, cuentas);
         
         while (true) {
           // 100 milisegundos...
@@ -123,7 +162,7 @@ int main(int argc, char** argv) {
           
           //Ejecuta lo que le dice el mensaje
           
-          if (!strncmp("kill", readbuffer, strlen("kill"))){
+          //if (!strncmp("kill", readbuffer, strlen("kill"))){
             // Cerrar lado de lectura del pipe
             close(bankPipe[0]);
 
@@ -131,7 +170,7 @@ int main(int argc, char** argv) {
             // debido a razones documentadas aqui:
             // https://goo.gl/Yxyuxb
             _exit(EXIT_SUCCESS);
-          }
+          //}
 
           // Usar usleep para dormir una cantidad de microsegundos
           usleep(random_number(100000, 500000));
@@ -150,7 +189,6 @@ int main(int argc, char** argv) {
     }
     else if (!strncmp("list", commandBuf, strlen("list"))) {
       if (isdigit(sucursales[0]) && isdigit(atoi(cuentas[0][0]))){
-        //Se imprime lista de movimientos en la sucursal
         printf("Lista:\n");
         printf("Sucursal\t|n° inicial\t|n° final\t|cuentas totales\n");
         for (int s=0;s<sizeof(sucursales);s++){
@@ -186,9 +224,14 @@ int main(int argc, char** argv) {
   }
 
   printf("Terminando ejecucion limpiamente...\n");
-  // Cerrar lado de escritura del pipe
-  close(bankPipe[1]);
   free(sucursales);
+  free(commandBuf);
+  free(cuentas);
+  free(sucursales);
+  for (int i=0; i<total_sucursales;i++){
+    close(pipes[i][1]);
+  }
+  free(pipes);
 
   return(EXIT_SUCCESS);
 }

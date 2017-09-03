@@ -50,12 +50,24 @@ int main(int argc, char** argv) {
   int** pipes = malloc(sizeof(int[2]));
   
   char readbuffer[80]; // buffer para lectura desde pipe
-  int bankPipe[2];
   
   const int bankId = getpid() % 1000;
   printf("Bienvenido a Banco '%d'\n", bankId);
+  
+  int sucursal_creada = 0;
 
   while (true) {
+  
+    if (sucursal_creada){
+      sucursal_creada = 0;
+      char *str_total_cuentas = malloc(sizeof(char)*sizeof(total_cuentas));
+      sprintf(str_total_cuentas, "%d", total_cuentas);
+      printf("%s\n", str_total_cuentas);
+      for (int i=0; i<total_sucursales; i++){
+        write(pipes[i][1], str_total_cuentas, (strlen(str_total_cuentas)+1));
+      }
+    }
+  
     printf(">>");
     getline(&commandBuf, &bufsize, stdin);
 
@@ -73,11 +85,15 @@ int main(int argc, char** argv) {
       // pueden iniciarse procesos sin control.
       // Buscar en Google "fork bomb"
       
+      sucursal_creada = 1;
+      
+      int bankPipe[2];
       total_sucursales++;
-      pipe(bankPipe);
       pipes = realloc(pipes, sizeof(int[2])*total_sucursales);
       pipes[total_sucursales-1] = bankPipe;
-      printf("size of pipes: %d", sizeof(pipes));
+      
+      pipe(pipes[total_sucursales-1]);
+      
       char* c;
       if (strlen(commandBuf)> strlen("init")){
         int j = 0;
@@ -102,12 +118,13 @@ int main(int argc, char** argv) {
       pid_t sucid = fork();
 
       if (sucid > 0) {
+      
         printf("Sucursal creada con ID '%d'\n", sucid);
 
         // Enviando cantidad de cuentas a la sucursal a la sucursal
         sucursales = realloc(sucursales, sizeof(pid_t)*total_sucursales);
         sucursales[total_sucursales-1] = sucid;
-        write(bankPipe[1], strnum, (strlen(strnum)+1));
+        write(pipes[total_sucursales-1][1], strnum, (strlen(strnum)+1));
 
         continue;
       }
@@ -156,21 +173,18 @@ int main(int argc, char** argv) {
         crear_cuentas(cantidad_cuentas, bankId, sucid, cuentas);
         
         while (true) {
-          // 100 milisegundos...
+          printf("En el while\n");
           bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
           printf("Soy la sucursal '%d' y leí el mensaje: '%s'\n", sucId, readbuffer);
           
-          //Ejecuta lo que le dice el mensaje
-          
-          //if (!strncmp("kill", readbuffer, strlen("kill"))){
-            // Cerrar lado de lectura del pipe
+          if (!strncmp("quit", readbuffer, strlen("quit"))){
+            free(movimientos);
+            free(cuentas);
+            free(tc);
+            free(cc);
             close(bankPipe[0]);
-
-            // Para terminar, el proceso hijo debe llamar a _exit,
-            // debido a razones documentadas aqui:
-            // https://goo.gl/Yxyuxb
             _exit(EXIT_SUCCESS);
-          //}
+          }
 
           // Usar usleep para dormir una cantidad de microsegundos
           usleep(random_number(100000, 500000));
@@ -186,6 +200,9 @@ int main(int argc, char** argv) {
     else if (!strncmp("kill", commandBuf, strlen("kill"))) {
       //Se elimina sucursal especificada.
       printf("Matar proceso\n");
+      for (int i=0; i<total_sucursales; i++){
+        write(pipes[i][1], "quit", (strlen("quit")+1));
+      }
     }
     else if (!strncmp("list", commandBuf, strlen("list"))) {
       if (isdigit(sucursales[0]) && isdigit(atoi(cuentas[0][0]))){

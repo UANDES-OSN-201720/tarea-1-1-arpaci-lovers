@@ -1,4 +1,4 @@
-#include "funcionesAlf.h"
+#include "algunasFx.h"
 int main()
 {
 	cuenta* lista_maestra[2];
@@ -27,6 +27,7 @@ int main()
 	{
 		char* mensaje_a_enviar = codificar_desde_sucursal('d', cuentaMaca, 2, 9000);
 		printf("Sucursal de Maca envia:  %s\n", mensaje_a_enviar);
+		
 		//Este string se envia por pipe a la casa matriz y ésta la se pasa
 		//al proceso SUCURSAL-ALF, basandose en el numero presente en el tercer paramtro
 		//de la funcion (que en la practica seria aleatorio).
@@ -75,6 +76,10 @@ int main()
 
 	cuenta** cuentas = malloc(sizeof(**cuentas));
 	crear_cuentas(10, (pid_t)8574, (pid_t)857, cuentas);
-  
+	
+	
+		char* mensaje_desde_banco = decodificar_casa_matriz(mensaje_a_documentar);
+		printf("AQUIIIIIII:\n%s\n", mensaje_a_documentar);
+
 	return 0;
 }

@@ -60,8 +60,8 @@ int main(int argc, char** argv) {
   
     if (sucursal_creada){
       sucursal_creada = 0;
-      char *str_total_cuentas = malloc(sizeof(char)*sizeof(total_cuentas));
-      sprintf(str_total_cuentas, "%d", total_cuentas);
+      char *str_total_cuentas = malloc(sizeof(char)*(sizeof(total_cuentas)+strlen("tc")));
+      sprintf(str_total_cuentas, "ts%d", total_cuentas);
       printf("%s\n", str_total_cuentas);
       for (int i=0; i<total_sucursales; i++){
         write(pipes[i][1], str_total_cuentas, (strlen(str_total_cuentas)+1));
@@ -172,12 +172,17 @@ int main(int argc, char** argv) {
 
         crear_cuentas(cantidad_cuentas, bankId, sucid, cuentas);
         
+        int sucPipe[2];
+        pipe(sucPipe);
+        
+        
         while (true) {
-          printf("En el while\n");
+          printf("En el while (%d)\n", sucId);
           bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
-          printf("Soy la sucursal '%d' y leí el mensaje: '%s'\n", sucId, readbuffer);
+          printf("readbuffer: %s\n", readbuffer);
           
           if (!strncmp("quit", readbuffer, strlen("quit"))){
+            printf("Cerrando sucursal...\n");
             free(movimientos);
             free(cuentas);
             free(tc);
@@ -188,6 +193,8 @@ int main(int argc, char** argv) {
 
           // Usar usleep para dormir una cantidad de microsegundos
           usleep(random_number(100000, 500000));
+          
+          
 
         }
       }
@@ -200,9 +207,7 @@ int main(int argc, char** argv) {
     else if (!strncmp("kill", commandBuf, strlen("kill"))) {
       //Se elimina sucursal especificada.
       printf("Matar proceso\n");
-      for (int i=0; i<total_sucursales; i++){
-        write(pipes[i][1], "quit", (strlen("quit")+1));
-      }
+      write(pipes[0][1], "quit", (strlen("quit")+1));
     }
     else if (!strncmp("list", commandBuf, strlen("list"))) {
       if (isdigit(sucursales[0]) && isdigit(atoi(cuentas[0][0]))){
@@ -246,6 +251,7 @@ int main(int argc, char** argv) {
   free(cuentas);
   free(sucursales);
   for (int i=0; i<total_sucursales;i++){
+    write(pipes[i][1], "quit", (strlen("quit")+1));
     close(pipes[i][1]);
   }
   free(pipes);

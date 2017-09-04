@@ -1,4 +1,4 @@
-#include "header.h"
+// #include "header.h"
 
 void crear_cuentas(int n_cuentas, pid_t bancid, pid_t sucid, cuenta** cuentas)
 {

@@ -1,38 +1,29 @@
 												Informe Tarea 1 parte 1 arpaci lovers
 
 
-1. Implementción para guardar cuentas, movimientos, y tipo de procesos sucursales:
+1. Funciones principales
+
+	Dentro de los distintos archivos .h que hicimos se presentan diferentes funciones que reciben los structs que componen la escencia de
+	las cuentas y retornan un string con la información necesaria para transmitir de una sucursal a otra el mensaje que simboliza una transacción.
+	Además se presentan funciones que decodifican estos strings en la casa matriz y permiten comunicar el mensaje a la sucursal apropiada a travez de pipes.
+	Una vez que se crea la primera cuenta se pretendia que se comenzaran a crear transacciones libremente y que estas se codificaran y fueran
+	transmitidas por los pipes.
 
 
-	La tarea se realizó sin utilizar exec(), por lo tanto, el código del proceso matriz y de los hijos comparten el mismo código.
-	Para guardar las cuentas y los movimientos se utilizaron structs.
+2. Problemas
 
-
-2. Funciones más importantes:
-
-
-	2.1 Codificar y Decodificar:
-
-		El proceso padre al recibir la información desde la consola, llama a la funcion correspondiente, y esa funcion llama a codificar,
-		para luego ser enviada por medio de pipes a los procesos hijos. Estos, a su vez usan la función decodificar correspondiente, para
-		acontinuación realizar los cambios solicitados o responder a una solicitud.
-		Del mismo modo que el proceso padre, la sucursales codifican la informacion de transferencia, se la envian a la matriz, y esta 
-		decodifica el mensaje, lee la información pertinente, para reenviar el mensaje a la sucursal correspondiente o retornar el mensaje
-		con error si la sucursal no existe.
-		
-	2.2 Crear cuentas, Generar Movimiento:
-	
-		Cuando el proceso padre recibe el comando init, este envía a las sucursales un nuevo número actualizado de la cantidad de cuentas 
-		existentes en el banco, para poder así generar transacciones al azar, sin que la mayoría sean inválidas poner cuenta inexistente.
-		Las sucursales generar transacciones aleatorias, las cuales se las mandan mediante los pipes a la matriz, la cual verifica que la
-		sucursal exista, actuando igualmente, la sucursal verifica que la cuenta que va a recibir un depósito, o se va a retirar fondos 
-		sea posible, enviando el mensaje con exito o error devuelta a la matriz.
+	Tuvimos varios problemas en crear un tipo de codificación util para poder incluir toda la información necesaria dentro del buffer para ser enviada a otro
+	proceso. Los pipes que implementamos no funcionan ya que la información que deberian recibir no esta llegando de manera apropiada, por lo que todo el tema 
+	de las transacciones no funciona. Sabemos que este era el fin de la tarea, y notamos que tenemos un entendimiento mucho más debil de lo que creiamos
+	respcto a la aplicación de lo aprendido en clases, por lo que comenzaremos la tarea desde cero para poder entregar una buena segunda parte.
 		
 		
 3. Complicaciones:
 
 
-	 La mayor complejidad al realizar la entrega, fue la implementación de pipes. Principalmente en la asignación de los nombres de los 
-	 pipes para cada sucursal, por lo que queda implementada pero no funcional.
+	No implementamos el uso de pipes ya que no pudimos entender bien el funcionamiento de estos y la estructura de codigo necesaria para que estos funcionaran.
+	Debido a esto las transacciones no se realizan y el objetivo de la tarea no fue cumplido. Todas nuestras funciones de codificación y decodoficación estaban
+	hechas para llegar ser enviadas por los pipes, pero nunca pudimos utilizarlas ya que no tenian lugar en nuestro main sin lo otro. Más que nada esto de debio 
+	a falta de tiempo, pero por sobre todo por falta de coordinación por parte del grupo. Esperamos poder mejorar para la proxima entrega. 
 
 

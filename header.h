@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
+#include <pthread.h>
 #include <sys/types.h>
 
 typedef struct

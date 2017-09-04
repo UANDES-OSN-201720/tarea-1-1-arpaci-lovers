@@ -47,7 +47,7 @@ void crear_cuentas(int n_cuentas, pid_t bancid, pid_t sucid, cuenta** cuentas)
 
 		cuentas[i] = c;
 
-		printf("- %s: $%d\n", c->codigo, c->saldo);
+		//printf("- %s: $%d\n", c->codigo, c->saldo);
 	}
 }
 
@@ -247,17 +247,18 @@ void dump_csv(movimiento** movimientos, int sucid)
 		iterator++;
 		linea = realloc(linea, iterator+1);
 
-		//ACA FALTA EL MEDIO DE ORIGEN
-		/*for (int j=0; j<sizeof(movimientos[i]->origen); j++)
+		//ACA FALTA EL MEDIO DE ORIGEN QUE NO TENIAMOS CLARO LO QUE ERA
+		for (int j=0; j<sizeof(movimientos[i]->origen); j++)
 		{
-			linea[iterator] = movimientos[i]->origen[j];
+			linea[iterator] = 'x';
+			/*linea[iterator] = movimientos[i]->origen[j];
 			iterator++;
-			linea = realloc(linea, iterator+1);
+			linea = realloc(linea, iterator+1);*/
 		}
 
 		linea[iterator] = ',';
 		iterator++;
-		linea = realloc(linea, iterator+1);*/
+		linea = realloc(linea, iterator+1);
 
 		for (int j=0; j<sizeof(movimientos[i]->origen); j++)
 		{
@@ -284,4 +285,9 @@ void dump_csv(movimiento** movimientos, int sucid)
 	}
 
 	fclose(fp);
+}
+
+void enviar_como_emisor(void* info)
+{
+	//write(info->pipe[1], info->mensaje, strlen(info->mensaje));
 }

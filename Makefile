@@ -1,22 +1,21 @@
+
 # Este Makefile define los parametros de
 # compilacion (CFLAGS) y reglas de compilacion
 # para cada archivo objeto y el ejecutable final
-# (bank).
-CFLAGS=-g -std=c11 -Wall -D _BSD_SOURCE -pthread
+# (bamain
+CC=gcc
+CFLAGS=-g -lm -std=c11 -Wall  -D _BSD_SOURCE -pthread 
 
-all: bank
+all:tarea1
 
 # Si se agregan archivos de codigo .c
-# para cada uno se debe agregar una regla
+# para cada uno se debe agregar regla
 # como las siguientes:
-main: main.c
-	$(CC) $(CFLAGS) -o $@ $^
+tarea1: main.o
+	$(CC) $(CFLAGS) -o tarea1 main.o -lm
 
-# Esta regla crea el ejecutable final.
-# se pueden anyadir los archivos .o
-# a continuacion de main.o
-bank: main.o
-	$(CC) $(CFLAGS) -o $@ $^
+main.o:main.c
+	$(CC) $(CFLAGS) -c main.c
 
 clean:
-	rm -f bank *.o
+	rm -f tarea1

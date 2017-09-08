@@ -1,4 +1,4 @@
-
+#include "funciones_dump_errs_accs"
 #include "funcionesAlf.h"
 
 int dump_input(char *cmd, int *sucursales, char *buff){
@@ -203,11 +203,6 @@ int main(int argc, char** argv) {
         
         
         while (true) {
-<<<<<<< HEAD
-          printf("En el while (%d)\n", sucId);
-          bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
-          printf("readbuffer: %s\n", readbuffer);
-=======
           char* mensaje = codificar_desde_sucursal('d', cuentas[random_number(0,cantidad_cuentas)], random_number(0, total_cuentas), random_number(1, 5000000));
           //write(pipes[numero_child][1], mensaje, strlen(mensaje));
           //printf("En el while\n");
@@ -221,7 +216,6 @@ int main(int argc, char** argv) {
           rc = pthread_create(&p1, NULL, enviar_como_emisor, info);
           rc = pthread_create(&p2, NULL, recibir_mensaje, info);
           */
->>>>>>> 285f6628009be65ecd4f2494fcc4a23c3c8a8b4d
           
           if (!strncmp("quit", readbuffer, strlen("quit"))){
             printf("Cerrando sucursal...\n");

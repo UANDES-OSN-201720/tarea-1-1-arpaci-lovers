@@ -1,5 +1,4 @@
 #include "header.h"
-#include "funciones_dump_errs_accs.c"
 #include "funcionesAlf.h"
 
 int dump_input(char *cmd, int *sucursales, char *buff){

@@ -1,4 +1,4 @@
-#include "funciones_dump_errs_accs"
+
 #include "funcionesAlf.h"
 
 int dump_input(char *cmd, int *sucursales, char *buff){
@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
       total_cuentas += atoi(c);
       
       char *strnum = malloc(sizeof(char)*(3+sizeof(total_cuentas)+strlen(c)+1));
-      sprintf(strnum, "%d %s %d\0", total_cuentas, c, total_sucursales);
+      sprintf(strnum, "%d %s %d", total_cuentas, c, total_sucursales);
       //printf("strnum: %s\n", strnum);
       pid_t sucid = fork();
 
@@ -170,17 +170,18 @@ int main(int argc, char** argv) {
         
         //Aca lee la cantidad de cuentas que debe crear esta sucursal
         char *cc = malloc(sizeof(char));
-        for (i; i<strlen(mensaje);i++){
+        for (i = 0; i<strlen(mensaje);i++){
           if(mensaje[i]==' '){
             counter = 0;
-            break;}
+            break;
+          }
           counter++;
           cc = realloc(cc, sizeof(char)*counter);
           cc[counter-1] = mensaje[i];
         }
 
         char* nc = malloc(sizeof(char));
-        for (i; i<strlen(mensaje);i++){
+        for (i=0; i<strlen(mensaje);i++){
           counter++;
           nc = realloc(nc, sizeof(char)*counter);
           nc[counter-1] = mensaje[i];
@@ -262,17 +263,17 @@ int main(int argc, char** argv) {
       }
     }
     else if (!strncmp("dump_errs", commandBuf, strlen("dump_errs"))) {    
-      int num = dump_input("dump_accs", sucursales, commandBuf);
+      //int num = dump_input("dump_accs", sucursales, commandBuf);
       //Creación archivo csv de movimientos fallidos en una sucursal
       printf("Archivo creado\n");
     }
     else if (!strncmp("dump_accs", commandBuf, strlen("dump_accs"))) {
-      int num = dump_input("dump_accs", sucursales, commandBuf);
+      //int num = dump_input("dump_accs", sucursales, commandBuf);
       //Creación archivo csv de movimientos fallidos en una sucursal
       printf("Archivo creado\n");
     }
     else if (!strncmp("dump", commandBuf, strlen("dump"))) {
-      int num = dump_input("dump_accs", sucursales, commandBuf);
+//      int num = dump_input("dump_accs", sucursales, commandBuf);
       if (getpid() == 0)
       {
         dump_csv(movimientos, getpid()%1000);

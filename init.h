@@ -1,4 +1,3 @@
-#include "header.h"
 #include "funcionesAlf.h"
 
 typedef struct
@@ -137,13 +136,13 @@ void* init(void* args)
     
     printf("cuentas: %d | terminales: %d\n", n_accounts, n_terminals);
     
-    pthread_mutex_t accounts_m = PTHREAD_MUTEX_INITIALIZER;
-    account* accounts = malloc(sizeof(account));
+    //pthread_mutex_t accounts_m = PTHREAD_MUTEX_INITIALIZER;
+    account* accounts = malloc(sizeof(account)*n_accounts);
 
     //void crear_cuentas(int n_cuentas, pid_t bancid, pid_t sucid, cuenta** cuentas)
-    pthread_mutex_lock(&accounts_m);
+    //pthread_mutex_lock(&accounts_m);
     create_accounts(n_accounts, bankId, getpid(), &accounts);
-    pthread_mutex_unlock(&accounts_m);
+    //pthread_mutex_unlock(&accounts_m);
   }
   
   return NULL;

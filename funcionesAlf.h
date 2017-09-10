@@ -1,4 +1,4 @@
-// #include "header.h"
+#include "header.h"
 
 void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas)
 {
@@ -8,7 +8,7 @@ void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas
 		a->number = i;
 		a->balance = random_number(1000, 500000000);
 		a->code = malloc(17*sizeof(char));
-    int u = (int)bancid;
+    	int u = (int)bancid;
 		int iterator = 0;
 		int digito_size = 5;
 		while (u > (int)pow(10, digito_size)) digito_size--;
@@ -47,7 +47,8 @@ void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas
 
 		cuentas[i] = a;
 
-		//printf("- %s: $%d\n", c->codigo, c->saldo);
+		printf("- %s: $%d\n", a->code, a->balance);
+		free(a);
 	}
 }
 /*

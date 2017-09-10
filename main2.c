@@ -44,10 +44,8 @@ int main(int argc, char** argv)
         free(pipes);
         free(branches);
         free(accounts_codes);
-        printf("hi\n");
         pthread_mutex_lock(&total_branches_m);
         pthread_mutex_lock(&branches_m);
-        printf("total_branches: %d\n", total_branches);
         if (total_branches == 0) break;
         for (int i = 0; i<total_branches; i++)
         {

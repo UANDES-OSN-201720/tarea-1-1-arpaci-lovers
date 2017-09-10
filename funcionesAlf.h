@@ -1,19 +1,19 @@
 // #include "header.h"
 
-void crear_cuentas(int n_cuentas, pid_t bancid, pid_t sucid, cuenta** cuentas)
+void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas)
 {
 	for(int i=0;i<n_cuentas;i++){
-		cuenta* c = malloc(sizeof(cuenta));
-		c->sucursal = sucid % 1000;
-		c->numero = i;
-		c->saldo = random_number(1000, 500000000);
-		c->codigo = malloc(17*sizeof(char));
-      	int u = (int)bancid;
+		account* a = malloc(sizeof(account));
+		a->branch = sucid % 1000;
+		a->number = i;
+		a->balance = random_number(1000, 500000000);
+		a->code = malloc(17*sizeof(char));
+    int u = (int)bancid;
 		int iterator = 0;
 		int digito_size = 5;
 		while (u > (int)pow(10, digito_size)) digito_size--;
 		while (u >= 0){
-			c->codigo[iterator] = (u/(int)pow(10, digito_size))+'0';
+			a->code[iterator] = (u/(int)pow(10, digito_size))+'0';
 			u = u%(int)pow(10, digito_size);
 			iterator++;
 			digito_size--;
@@ -22,35 +22,35 @@ void crear_cuentas(int n_cuentas, pid_t bancid, pid_t sucid, cuenta** cuentas)
 				break;
 			}
 		}
-      	int suc = c->sucursal;
-      	c->codigo[6] = '-';
-	  	c->codigo[7] = (suc/100)+'0';
-	  	c->codigo[8] = ((suc%100)/10)+'0';
-	  	c->codigo[9] = (suc%10)+'0';
-	  	c->codigo[10] = '-';
-	  	int cu = c->numero;
+    	int suc = a->branch;
+    	a->code[6] = '-';
+	  	a->code[7] = (suc/100)+'0';
+	  	a->code[8] = ((suc%100)/10)+'0';
+	  	a->code[9] = (suc%10)+'0';
+	  	a->code[10] = '-';
+	  	int ac = a->number;
 	  	iterator = 11;
 	  	int digit_size = 5;
-	 	while (cu > (int)pow(10, digit_size)) digit_size--;
-	  	while (cu >= 0){
-			c->codigo[iterator] = (cu/(int)pow(10, digit_size))+'0';
-			cu = cu%(int)pow(10, digit_size);
+	 	while (ac > (int)pow(10, digit_size)) digit_size--;
+	  	while (ac >= 0){
+			a->code[iterator] = (ac/(int)pow(10, digit_size))+'0';
+			ac = ac%(int)pow(10, digit_size);
 			iterator++;
 			digit_size--;
 			if (digit_size < 0){
-				cu = -1;
+				ac = -1;
 				break;
 			}
 		}
 
-		c->codigo[iterator] = '\0';
+		a->code[iterator] = '\0';
 
-		cuentas[i] = c;
+		cuentas[i] = a;
 
 		//printf("- %s: $%d\n", c->codigo, c->saldo);
 	}
 }
-
+/*
 char* codificar_desde_sucursal(char operacion, cuenta* cuenta, int aleatorio, int monto)
 {
 	char* retorno;
@@ -120,10 +120,10 @@ char* codificar_desde_sucursal_con_resultado(char operacion, cuenta* cuentaEmiso
 	}
 	retorno[19] = '-';
 	retorno[20] = '-';
-	/*
-	OJO aca que la division entre ambas cuentas esta delimitada
-	por dos guiones en lugar de uno.
-	*/
+	
+	//OJO aca que la division entre ambas cuentas esta delimitada
+	//por dos guiones en lugar de uno.
+	
 	for (int i=0;i<17;i++)
 	{
 		retorno[i+21] = cuentaReceptor->codigo[i];
@@ -251,9 +251,9 @@ void dump_csv(movimiento** movimientos, int sucid)
 		for (int j=0; j<sizeof(movimientos[i]->origen); j++)
 		{
 			linea[iterator] = 'x';
-			/*linea[iterator] = movimientos[i]->origen[j];
-			iterator++;
-			linea = realloc(linea, iterator+1);*/
+			//linea[iterator] = movimientos[i]->origen[j];
+			//iterator++;
+			//linea = realloc(linea, iterator+1);
 		}
 
 		linea[iterator] = ',';
@@ -290,4 +290,4 @@ void dump_csv(movimiento** movimientos, int sucid)
 void enviar_como_emisor(void* info)
 {
 	//write(info->pipe[1], info->mensaje, strlen(info->mensaje));
-}
+}*/

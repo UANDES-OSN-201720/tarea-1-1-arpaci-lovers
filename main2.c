@@ -1,15 +1,12 @@
-#include "header.h"
-#include <signal.h>
-#include <pthread.h>
 
-// Cuenten con este codigo monolitico en una funcion
-// main como punto de partida.
-// Idealmente, el codigo del programa deberia estar
-// adecuadamente modularizado en distintas funciones,
-// e incluso en archivos separados, con dependencias
-// distribuidas en headers.
+#include <signal.h>
+#include "init.h"
+
+
 int main(int argc, char** argv) 
 {
+  srand(time(NULL));
+
   size_t bufsize = 512;
   char* commandBuf = malloc(sizeof(char)*bufsize);
   //Manejar posible error
@@ -18,21 +15,15 @@ int main(int argc, char** argv)
   // el elemento 0 es para lectura
   // y el elemento 1 es para escritura.
   int** pipes = malloc(sizeof(int*));
-  //Manejar posible error
+  //>Manejar posible error
   
-  int total_sucursales = 0;
-  pid_t* sucursales = malloc(sizeof(int));
-  //Manejar posible error
+  int total_branches = 0;
+  pid_t* branches = malloc(sizeof(int));
+  //>Manejar posible error
   
-  int total_cuentas = 0;
-  char** cuentas = malloc(sizeof(char*));
-  //Manejar posible error
-  
-  int bankPipe[2];
-  char readbuffer[80]; // buffer para lectura desde pipe
-
-  // Se crea un pipe...
-  pipe(bankPipe);
+  int total_accounts = 0;
+  char** accounts_codes = malloc(sizeof(char*));
+  //>Manejar posible error
   
 
   const int bankId = getpid() % 1000;
@@ -49,20 +40,40 @@ int main(int argc, char** argv)
 
     if (!strncmp("quit", commandBuf, strlen("quit"))) 
     {
+        printf("In main->quit\n");
         free(pipes);
-        free(sucursales);
-        free(cuentas);
-        
-        for (int i = 0; i<total_sucursales; i++)
+        free(branches);
+        free(accounts_codes);
+        printf("hi\n");
+        pthread_mutex_lock(&total_branches_m);
+        pthread_mutex_lock(&branches_m);
+        printf("total_branches: %d\n", total_branches);
+        if (total_branches == 0) break;
+        for (int i = 0; i<total_branches; i++)
         {
-          kill(sucursales[i], SIGKILL);
+          kill(branches[i], SIGKILL);
         }
+        pthread_mutex_unlock(&branches_m);
+        pthread_mutex_unlock(&total_branches_m);
         break;
     }
     else if (!strncmp("init", commandBuf, strlen("init"))) 
     {
-      total_sucursales++;
-      pipes = realloc(pipes, sizeof(int*)*total_sucursales);
+      printf("In main->init\n");
+      
+      pthread_t init_thread;
+      init_args ia;
+      
+      ia.bankId = bankId;
+      ia.total_branches = &total_branches;
+      ia.branches = &branches;
+      ia.pipes = &pipes;
+      ia.total_accounts = &total_accounts;
+      ia.commandBuffer = commandBuf;
+    
+      pthread_create(&init_thread, NULL, init, &ia);
+      /*total_branches++;
+      pipes = realloc(pipes, sizeof(int*)*total_branches);
       
       pid_t sucid = fork();
 
@@ -96,12 +107,13 @@ int main(int argc, char** argv)
           // https://goo.gl/Yxyuxb
           _exit(EXIT_SUCCESS);
         }
-      }
+      
       // error
+      }
       else {
         fprintf(stderr, "Error al crear proceso de sucursal!\n");
         return (EXIT_FAILURE);
-      }
+      }*/
     }
     else {
       fprintf(stderr, "Comando no reconocido.\n");
@@ -110,8 +122,6 @@ int main(int argc, char** argv)
   }
 
   printf("Terminando ejecucion limpiamente...\n");
-  // Cerrar lado de escritura del pipe
-  close(bankPipe[1]);
 
   return(EXIT_SUCCESS);
 }

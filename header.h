@@ -7,23 +7,31 @@
 #include <math.h>
 #include <pthread.h>
 #include <sys/types.h>
+#include <assert.h>
+
+pthread_mutex_t pipes_m = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t total_branches_m = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t branches_m = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t total_accounts_m = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t accounts_codes_m = PTHREAD_MUTEX_INITIALIZER;
+
 
 typedef struct
 {
-	int sucursal;
-	int numero; 
-	int saldo;
-	char* codigo;
-} cuenta;
+	int branch;
+	int number; 
+	int balance;
+	char* code;
+} account;
 
 typedef struct
 {
-	char* tipo;
-	char* origen;
-	char* destino;
-	unsigned int monto;
-	char* er_ex;
-} movimiento;
+	char* type;
+	char* origin;
+	char* destination;
+	unsigned int amount;
+	char* state;
+} transaction;
 
 
 int random_number(int min, int max){

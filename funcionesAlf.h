@@ -1,5 +1,12 @@
 #include "header.h"
 
+char choose_task()
+{
+	int choice = random_number(0,1);
+	if (choice == 0) return 'd';
+	else return 'r';
+}
+
 void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas)
 {
 	for(int i=0;i<n_cuentas;i++){
@@ -7,7 +14,12 @@ void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas
 		a->branch = sucid % 1000;
 		a->number = i;
 		a->balance = random_number(1000, 500000000);
+		/*
+		printf("hi 1\n");
+		char* aux = malloc(17*sizeof(char));
+		printf("hi 2\n");
 		a->code = malloc(17*sizeof(char));
+		*/
     	int u = (int)bancid;
 		int iterator = 0;
 		int digito_size = 5;
@@ -48,31 +60,30 @@ void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas
 		cuentas[i] = a;
 
 		printf("- %s: $%d\n", a->code, a->balance);
-		free(a);
 	}
 }
-/*
-char* codificar_desde_sucursal(char operacion, cuenta* cuenta, int aleatorio, int monto)
-{
-	char* retorno;
-	retorno = malloc(64*sizeof(char*));
 
-	retorno[0] = operacion;
-	retorno[1] = '-';
-	for (int i=0;i<17;i++)
+void* create_transaction(int amount_accounts, account** accounts, int random, int* pipe)
+{
+	char* result;
+	result = malloc(64*sizeof(char*));
+	int account_to_be_used = random_number(0,amount_accounts-1);
+	result[0] = choose_task();
+	result[1] = ' ';
+	for (int i=0;i<14;i++)
 	{
-		retorno[i+2] = cuenta->codigo[i];
+		result[i+2] = accounts[account_to_be_used]->code[i];
 	}
-	retorno[19] = '-';
+	result[19] = ' ';
 
 	int iterator = 20;
 
-	int mto = aleatorio;
+	int mto = random;
 	int digit_size = 0;
 	while (mto > (int)pow(10, digit_size)) digit_size++;
 	digit_size--;
 	while (mto >= 0){
-		retorno[iterator] = (mto/(int)pow(10, digit_size))+'0';
+		result[iterator] = (mto/(int)pow(10, digit_size))+'0';
 		mto = mto%(int)pow(10, digit_size);
 		iterator++;
 		digit_size--;
@@ -82,15 +93,15 @@ char* codificar_desde_sucursal(char operacion, cuenta* cuenta, int aleatorio, in
 		}
 	}
 
-	retorno[iterator] = '-';
+	result[iterator] = ' ';
 	iterator++;
 
-	mto = monto;
+	mto = random_number(0,5000000);
 	digit_size = 0;
 	while (mto > (int)pow(10, digit_size)) digit_size++;
 	digit_size--;
 	while (mto >= 0){
-		retorno[iterator] = (mto/(int)pow(10, digit_size))+'0';
+		result[iterator] = (mto/(int)pow(10, digit_size))+'0';
 		mto = mto%(int)pow(10, digit_size);
 		iterator++;
 		digit_size--;
@@ -99,11 +110,13 @@ char* codificar_desde_sucursal(char operacion, cuenta* cuenta, int aleatorio, in
 			break;
 		}
 	}
-	retorno[iterator] = '\0';
+	result[iterator] = '\0';
 
-	return retorno;
+	write(pipe[1], result, strlen(result));
+
+	return NULL;
 }
-
+/*
 char* codificar_desde_sucursal_con_resultado(char operacion, cuenta* cuentaEmisor, cuenta* cuentaReceptor, int monto, char resultado)
 {
 	//Si el ultimo parametro de la funcion es 'e', implica exito.
@@ -288,7 +301,4 @@ void dump_csv(movimiento** movimientos, int sucid)
 	fclose(fp);
 }
 
-void enviar_como_emisor(void* info)
-{
-	//write(info->pipe[1], info->mensaje, strlen(info->mensaje));
-}*/
+*/

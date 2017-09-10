@@ -21,8 +21,14 @@ typedef struct
 	int branch;
 	int number; 
 	int balance;
-	char* code;
+	char code[15];
 } account;
+
+typedef struct
+{
+	char* mensaje;
+	int* pipe;
+}info;
 
 typedef struct
 {

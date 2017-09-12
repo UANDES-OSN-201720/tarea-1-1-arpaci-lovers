@@ -14,12 +14,9 @@ void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas
 		a->branch = sucid % 1000;
 		a->number = i;
 		a->balance = random_number(1000, 500000000);
-		/*
 		printf("hi 1\n");
-		char* aux = malloc(17*sizeof(char));
-		printf("hi 2\n");
 		a->code = malloc(17*sizeof(char));
-		*/
+		printf("hi 2\n");
     	int u = (int)bancid;
 		int iterator = 0;
 		int digito_size = 5;

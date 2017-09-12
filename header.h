@@ -21,7 +21,7 @@ typedef struct
 	int branch;
 	int number; 
 	int balance;
-	char code[15];
+	char* code;
 } account;
 
 typedef struct

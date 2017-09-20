@@ -79,11 +79,11 @@ void* init(void* args)
     int branch_position = *total_branches - 1;
     pthread_mutex_unlock(&total_branches_m);
     
-    pthread_mutex_t total_transactions_m = PTHREAD_MUTEX_INITIALIZER;
-    int total_transactions = 0;
+    //pthread_mutex_t total_transactions_m = PTHREAD_MUTEX_INITIALIZER;
+    //int total_transactions = 0;
     
-    pthread_mutex_t transactions_m = PTHREAD_MUTEX_INITIALIZER;
-    transaction* transactions = malloc(sizeof(transaction));
+    //pthread_mutex_t transactions_m = PTHREAD_MUTEX_INITIALIZER;
+    //transaction* transactions = malloc(sizeof(transaction));
  
     read((*pipes)[branch_position][0], readbuffer, sizeof(readbuffer));
     //printf("%s - %d\n", readbuffer, (int)strlen(readbuffer));

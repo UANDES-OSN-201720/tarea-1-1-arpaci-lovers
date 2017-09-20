@@ -1,23 +1,17 @@
+#ifndef PIPE_HANDLER_H
+#define PIPE_HANDLER_H
 #include "header.h"
+#include "funcionesAlf.h"
+
 
 typedef struct
 {
-  int total_branches;
+  int* total_branches;
   int*** pipes;
-} mac_args;
+  char*** accounts;
+  int* total_accounts;
+} moc_args;
 
-void* main_office_comunication(void* args)
-{
-  char readbuffer[80];
-  mac_args* m = (mac_args*) args;
-  while (true)
-  {
-    for (int i=0; i<m->total_branches; i++)
-    {
-      int position = (m->total_branches)*2 + 1;
-      read(m->(*pipes)[position][0], readbuffer, strlen(
-    }
-  }
-  
-  return NULL;
-}
+void* main_office_comunication(void* args);
+
+#endif

@@ -1,5 +1,6 @@
 #ifndef HEADER_H
 #define HEADER_H
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>

@@ -1,6 +1,6 @@
 #include <signal.h>
 #include "init.h"
-
+#include "pipe_handler.h"
 
 int main(int argc, char** argv) 
 {
@@ -27,6 +27,8 @@ int main(int argc, char** argv)
 
   const int bankId = getpid() % 1000;
   printf("Bienvenido a Banco '%d'\n", bankId);
+  
+  
 
   while (true) {
     printf(">>");

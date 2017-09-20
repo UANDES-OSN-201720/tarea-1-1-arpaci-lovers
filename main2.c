@@ -1,6 +1,13 @@
 #include <signal.h>
 #include "init.h"
-#include "pipe_handler.h"
+//#include "pipe_handler.h"
+
+extern pthread_mutex_t pipes_m;
+extern pthread_mutex_t total_branches_m;
+extern pthread_mutex_t branches_m;
+extern pthread_mutex_t total_accounts_m;
+extern pthread_mutex_t accounts_codes_m;
+>>>>>>> 2dfa5cad7644be555f19145472a0f59bd34910ab
 
 int main(int argc, char** argv) 
 {

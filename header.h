@@ -1,3 +1,5 @@
+#ifndef HEADER_H
+#define HEADER_H
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -9,15 +11,8 @@
 #include <sys/types.h>
 #include <assert.h>
 
-pthread_mutex_t pipes_m = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t total_branches_m = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t branches_m = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t total_accounts_m = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t accounts_codes_m = PTHREAD_MUTEX_INITIALIZER;
-
-
 typedef struct
-{
+{	
 	int branch;
 	int number; 
 	int balance;
@@ -40,7 +35,6 @@ typedef struct
 } transaction;
 
 
-int random_number(int min, int max){
-    int t = (rand() % (max + 1 - min)) + min;
-    return t;
-}
+int random_number(int min, int max);
+
+#endif

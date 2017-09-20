@@ -1,13 +1,165 @@
-#ifndef FUNCALF_H
-#define FUNCALF_H
+#include <math.h>
+#include <stdlib.h>
+#include "funcionesAlf.h"
 #include "header.h"
 
-char choose_task();
-void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas);
-void* create_transaction(int amount_accounts, account** accounts, int random, int* pipe);
-char* reach_input(char** input, int argumento);
+int random_number(int min, int max){
+    int t = (rand() % (max + 1 - min)) + min;
+    return t;
+}
 
-#endif
+char choose_task()
+{
+	int choice = random_number(0,1);
+	if (choice == 0) return 'd';
+	else return 'r';
+}
+
+char* reach_input(char** input, int argument)
+{
+	char* goal = malloc(sizeof(char));
+	char* given = *input;
+	int traveler = 0;
+	int counter = 0;
+	while (counter<argument)
+	{
+		if (given[traveler] == ' ')
+		{
+			counter++;
+		}
+		else if (given[traveler] == '\0')
+		{
+			return NULL;
+		}
+
+		traveler++;
+
+		if (counter == argument)
+		{
+			break;
+		}
+	}
+
+	counter = 0;
+	while (given[traveler] != ' ')
+	{
+		if (given[traveler] == '\0')
+		{
+			goal[counter] = '\0';
+			break;
+		}
+		goal[counter] = given[traveler];
+		counter++; traveler++;
+		goal = realloc(goal, sizeof(char)*(counter)+1);
+	}
+
+	return goal;
+}
+
+void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas)
+{
+	for(int i=0;i<n_cuentas;i++) {
+		account* a = malloc(sizeof(account));
+		a->branch = sucid % 1000;
+		a->number = i;
+		a->balance = random_number(1000, 500000000);
+		a->code = calloc(15,sizeof(char));
+    	int u = (int)bancid;
+		int iterator = 0;
+		int digito_size = 5;
+		while (u > (int)pow(10, digito_size)) digito_size--;
+		while (u >= 0){
+			a->code[iterator] = (u/(int)pow(10, digito_size))+'0';
+			u = u%(int)pow(10, digito_size);
+			iterator++;
+			digito_size--;
+			if (digito_size < 0){
+				u = -1;
+				break;
+			}
+		}
+    	int suc = a->branch;
+    	a->code[6] = '-';
+	  	a->code[7] = (suc/100)+'0';
+	  	a->code[8] = ((suc%100)/10)+'0';
+	  	a->code[9] = (suc%10)+'0';
+	  	a->code[10] = '-';
+	  	int ac = a->number;
+	  	iterator = 11;
+	  	int digit_size = 5;
+	 	while (ac > (int)pow(10, digit_size)) digit_size--;
+	  	while (ac >= 0){
+			a->code[iterator] = (ac/(int)pow(10, digit_size))+'0';
+			ac = ac%(int)pow(10, digit_size);
+			iterator++;
+			digit_size--;
+			if (digit_size < 0){
+				ac = -1;
+				break;
+			}
+		}
+
+		a->code[iterator] = '\0';
+
+		cuentas[i] = a;
+
+		printf("- %s: $%d\n", a->code, a->balance);
+	}
+}
+
+void* create_transaction(int amount_accounts, account** accounts, int random, int* pipe)
+{
+	char* result;
+	result = malloc(64*sizeof(char*));
+	int account_to_be_used = random_number(0,amount_accounts-1);
+	result[0] = choose_task();
+	result[1] = ' ';
+	for (int i=0;i<14;i++)
+	{
+		result[i+2] = accounts[account_to_be_used]->code[i];
+	}
+	result[19] = ' ';
+
+	int iterator = 20;
+
+	int mto = random;
+	int digit_size = 0;
+	while (mto > (int)pow(10, digit_size)) digit_size++;
+	digit_size--;
+	while (mto >= 0){
+		result[iterator] = (mto/(int)pow(10, digit_size))+'0';
+		mto = mto%(int)pow(10, digit_size);
+		iterator++;
+		digit_size--;
+		if (digit_size < 0){
+			mto = -1;
+			break;
+		}
+	}
+
+	result[iterator] = ' ';
+	iterator++;
+
+	mto = random_number(0,5000000);
+	digit_size = 0;
+	while (mto > (int)pow(10, digit_size)) digit_size++;
+	digit_size--;
+	while (mto >= 0){
+		result[iterator] = (mto/(int)pow(10, digit_size))+'0';
+		mto = mto%(int)pow(10, digit_size);
+		iterator++;
+		digit_size--;
+		if (digit_size < 0){
+			mto = -1;
+			break;
+		}
+	}
+	result[iterator] = '\0';
+
+	write(pipe[1], result, strlen(result));
+
+	return NULL;
+}
 /*
 char* codificar_desde_sucursal_con_resultado(char operacion, cuenta* cuentaEmisor, cuenta* cuentaReceptor, int monto, char resultado)
 {

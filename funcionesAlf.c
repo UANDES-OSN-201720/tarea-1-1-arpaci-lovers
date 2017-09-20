@@ -107,12 +107,22 @@ void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas
 	}
 }
 
+int lenght_transaction(char t)
+{
+	if (t == 'd')
+	{
+		return 35;
+	}
+	return 25;
+}
+
 void* create_transaction(int amount_accounts, account** accounts, int random, int* pipe)
 {
-	char* result;
-	result = malloc(64*sizeof(char*));
+	
 	int account_to_be_used = random_number(0,amount_accounts-1);
-	result[0] = choose_task();
+	char type = choose_task();
+	char* result = malloc(sizeof(char)*lenght_transaction(type));
+	result[0] = type;
 	result[1] = ' ';
 	for (int i=0;i<14;i++)
 	{

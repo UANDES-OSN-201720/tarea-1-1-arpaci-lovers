@@ -6,6 +6,7 @@ char choose_task();
 void create_accounts(int n_cuentas, pid_t bancid, pid_t sucid, account** cuentas);
 void* create_transaction(int amount_accounts, account** accounts, int random, int* pipe);
 char* reach_input(char** input, int argumento);
+int lenght_transaction(char t);
 
 #endif
 /*

@@ -1,5 +1,6 @@
 #include "init.h"
 #include "funcionesAlf.h"
+#include "pipe_handler.h"
 
 pthread_mutex_t pipes_m = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t total_branches_m = PTHREAD_MUTEX_INITIALIZER;

@@ -2,6 +2,7 @@
 
 void* main_office_comunication(void* args)
 {
+	printf("en el pipe handler\n");
   char* readbuffer = malloc(sizeof(char)*80);
   moc_args* m = (moc_args*) args;
   while (true)

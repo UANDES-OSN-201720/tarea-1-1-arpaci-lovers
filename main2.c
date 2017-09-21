@@ -39,7 +39,7 @@ int main(int argc, char** argv)
   moc_args ma;
   ma.total_branches = &total_branches;
   ma.pipes = &pipes;
-  ma.accounts = &accounts_codes;
+  ma.accounts_codes = &accounts_codes;
   ma.total_accounts = &total_accounts;
   
   pthread_t pipe_handler_t;
@@ -84,19 +84,9 @@ int main(int argc, char** argv)
       ia.pipes = &pipes;
       ia.total_accounts = &total_accounts;
       ia.commandBuffer = commandBuf;
+ 			ia.accounts_codes = &accounts_codes;   
     
       pthread_create(&init_thread, NULL, init, &ia);
-      
-      char* branch_accounts = reach_input(commandBuffer, 1);
-      char* p;
-      int ba = strtol(branch_accounts, &p, 10);
-      
-      char
-      
-      for (int i=0; i<sa, i++)
-      {
-      
-      }
       
       /*total_branches++;
       pipes = realloc(pipes, sizeof(int*)*total_branches);

@@ -17,10 +17,10 @@ void* init(void* args)
   int** branches = ia->branches;
   int*** pipes = ia->pipes;
   int* total_accounts = ia->total_accounts;
+  char*** accounts_codes = ia->accounts_codes;
   
   char* str_accounts = reach_input(&commandBuffer, 1);
   char* char_terminals = reach_input(&commandBuffer, 2);
-  //str_accounts[0] = '\0';
 
   char *tmp_ptr; //Puntero para la conversion de string a int (strtol)
   
@@ -60,14 +60,43 @@ void* init(void* args)
   {
     printf("En el padre %d con hijo %d\n", bankId, pid_branch);
   
-  pthread_mutex_lock(&branches_m);
-  pthread_mutex_lock(&total_branches_m);
+		pthread_mutex_lock(&branches_m);
+		pthread_mutex_lock(&total_branches_m);
+		
+		*branches = realloc(*branches, sizeof(pid_t)*((*total_branches)+1));
+		*branches[(*total_branches)] = pid_branch;
+		
+		pthread_mutex_unlock(&total_branches_m);
+		pthread_mutex_unlock(&branches_m);
+		
+		char* branch_accounts = reach_input(&commandBuffer, 1);
+		char* p;
+		int ba = strtol(branch_accounts, &p, 10);
+		
+		pthread_mutex_lock(&accounts_codes_m);
+		*accounts_codes = realloc(*accounts_codes, sizeof(*accounts_codes)+ba);
+		pthread_mutex_unlock(&accounts_codes_m);
+		
+		int branchId = pid_branch % 1000;
+		char code[6];
+		
+		for (int i=0; i<ba; i++)
+		{
+			for (int j=0; j<6; j++)
+			{
+				code[j] = (i/(int)pow(10,5-j))%10 +'0';
+			}
+			
+			char* new_account = malloc(sizeof(char)*15);
+			sprintf(new_account, "%d-%d-%s", bankId, branchId, code);
+			
+			pthread_mutex_lock(&accounts_codes_m);
+			(*accounts_codes)[(*total_accounts)+i] = malloc(strlen(new_account));
+			(*accounts_codes)[(*total_accounts)+i] = new_account;
+			pthread_mutex_unlock(&accounts_codes_m);
+			
+		}
   
-  *branches = realloc(*branches, sizeof(pid_t)*((*total_branches)+1));
-  *branches[(*total_branches)] = pid_branch;
-  
-  pthread_mutex_unlock(&total_branches_m);
-  pthread_mutex_unlock(&branches_m);
   
   }
   if (!pid_branch) //Proceso Sucursal
@@ -103,6 +132,7 @@ void* init(void* args)
     pthread_mutex_lock(&accounts_m);
     create_accounts(n_accounts, bankId, getpid(), &accounts);
     pthread_mutex_unlock(&accounts_m);
+    
 
     /*for (int i=0; i<n_terminals; ++i)
     {

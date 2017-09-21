@@ -8,7 +8,7 @@ typedef struct
 {
   int* total_branches;
   int*** pipes;
-  char*** accounts;
+  char*** accounts_codes;
   int* total_accounts;
 } moc_args;
 

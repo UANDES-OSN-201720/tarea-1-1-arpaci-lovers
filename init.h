@@ -17,6 +17,7 @@ typedef struct
   int** branches;
   int*** pipes;
   int* total_accounts;
+  char*** accounts_codes;
 } init_args;
 
 void* init(void* args);  

@@ -88,7 +88,7 @@ void* init(void* args)
 			}
 			
 			char* new_account = malloc(sizeof(char)*15);
-			sprintf(new_account, "%d-%d-%s", bankId, branchId, code);
+			sprintf(new_account, "000%d-%d-%s", bankId, branchId, code);
 			
 			pthread_mutex_lock(&accounts_codes_m);
 			(*accounts_codes)[(*total_accounts)+i] = malloc(strlen(new_account));
@@ -132,7 +132,10 @@ void* init(void* args)
     pthread_mutex_lock(&accounts_m);
     create_accounts(n_accounts, bankId, getpid(), &accounts);
     pthread_mutex_unlock(&accounts_m);
-    
+		
+		pthread_mutex_lock(&pipes_m);
+		write((*pipes)[branch_position+1][1], "null", strlen("null"));
+		pthread_mutex_unlock(&pipes_m);
 
     /*for (int i=0; i<n_terminals; ++i)
     {

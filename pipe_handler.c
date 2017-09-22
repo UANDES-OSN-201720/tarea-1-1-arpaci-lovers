@@ -16,11 +16,14 @@ void* main_office_comunication(void* args)
   	pthread_mutex_lock(&total_branches_m);
     for (int i=0; i<*(m->total_branches); i++)
     {
+    
       int position = i*2+1;
       
       pthread_mutex_lock(&pipes_m);
       read(*(m->pipes)[position][0], readbuffer, strlen(readbuffer));
       pthread_mutex_unlock(&pipes_m);
+      
+      if (readbuffer[0] == 'n') continue;
       
       char* operation = reach_input(&readbuffer, 1);
       char* origin = reach_input(&readbuffer, 2);

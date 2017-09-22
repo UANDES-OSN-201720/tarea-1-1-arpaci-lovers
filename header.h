@@ -26,15 +26,6 @@ typedef struct
 	int* pipe;
 }info;
 
-typedef struct
-{
-	char* type;
-	char* origin;
-	char* destination;
-	unsigned int amount;
-	char* state;
-} transaction;
-
 
 int random_number(int min, int max);
 

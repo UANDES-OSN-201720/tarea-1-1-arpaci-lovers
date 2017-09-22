@@ -11,8 +11,8 @@ all:tarea1
 # Si se agregan archivos de codigo .c
 # para cada uno se debe agregar regla
 # como las siguientes:
-tarea1: main2.o funcionesAlf.o init.o pipe_handler.o
-	$(CC) $(CFLAGS) -o tarea1 main2.o funcionesAlf.o init.o pipe_handler.o -lm 
+tarea1: main2.o funcionesAlf.o init.o pipe_handler.o terminal.o
+	$(CC) $(CFLAGS) -o tarea1 main2.o funcionesAlf.o init.o pipe_handler.o terminal.o -lm 
 
 main2.o: main2.c
 	$(CC) $(CFLAGS) -c main2.c
@@ -25,6 +25,9 @@ init.o: init.c
 	
 pipe_handler.o: pipe_handler.c
 	$(CC) $(CFLAGS) -c pipe_handler.c
+	
+terminal.o: terminal.c
+	$(CC) $(CFLAGS) -c terminal.c
 
 clean:
 	rm -f tarea1 *.o

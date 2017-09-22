@@ -113,7 +113,7 @@ void* init(void* args)
     //int total_transactions = 0;
     
     //pthread_mutex_t transactions_m = PTHREAD_MUTEX_INITIALIZER;
-    //transaction* transactions = malloc(sizeof(transaction));
+    //char** transactions = malloc(sizeof(char));
  
     read((*pipes)[branch_position][0], readbuffer, sizeof(readbuffer));
     //printf("%s - %d\n", readbuffer, (int)strlen(readbuffer));
@@ -133,16 +133,11 @@ void* init(void* args)
     create_accounts(n_accounts, bankId, getpid(), &accounts);
     pthread_mutex_unlock(&accounts_m);
 		
-		pthread_mutex_lock(&pipes_m);
-		write((*pipes)[branch_position+1][1], "null", strlen("null"));
-		pthread_mutex_unlock(&pipes_m);
 
-    /*for (int i=0; i<n_terminals; ++i)
+    for (int i=0; i<n_terminals; ++i)
     {
-      pthread_t p;
-      int rc = 0;
-      rc = pthread_create(&p, NULL, create_transaction, )
-    }*/
+      ;
+    }
 
   }
   return NULL;

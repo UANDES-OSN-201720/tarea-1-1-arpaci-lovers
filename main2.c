@@ -87,21 +87,7 @@ int main(int argc, char** argv)
  			ia.accounts_codes = &accounts_codes;   
     
       pthread_create(&init_thread, NULL, init, &ia);
-      
-      /*total_branches++;
-      pipes = realloc(pipes, sizeof(int*)*total_branches);
-      
-      pid_t sucid = fork();
-
-      if (sucid > 0) {
-        printf("Sucursal creada con ID '%d'\n", sucid);
-
-        // Enviando saludo a la sucursal
-        char msg[] = "Hola sucursal, como estas?";
-        write(bankPipe[1], msg, (strlen(msg)+1));
-
-        continue;
-      }
+      /*
       // Proceso de sucursal
       else if (!sucid) {
         int sucId = getpid() % 1000;

@@ -2,6 +2,7 @@
 #define FUNCIONES_ALF
 
 #include "funcionesAlf.h"
+#include "terminal.h"
 
 pthread_mutex_t pipes_m;
 pthread_mutex_t total_branches_m;

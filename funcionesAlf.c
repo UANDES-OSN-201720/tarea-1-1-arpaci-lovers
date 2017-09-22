@@ -116,7 +116,7 @@ int lenght_transaction(char t)
 	return 25;
 }
 
-void* create_transaction(int amount_accounts, account** accounts, int random, int* pipe)
+char* create_transaction(int amount_accounts, account** accounts, int random, int* pipe)
 {
 	
 	int account_to_be_used = random_number(0,amount_accounts-1);
@@ -168,7 +168,7 @@ void* create_transaction(int amount_accounts, account** accounts, int random, in
 
 	write(pipe[1], result, strlen(result));
 
-	return NULL;
+	return result;
 }
 /*
 char* codificar_desde_sucursal_con_resultado(char operacion, cuenta* cuentaEmisor, cuenta* cuentaReceptor, int monto, char resultado)

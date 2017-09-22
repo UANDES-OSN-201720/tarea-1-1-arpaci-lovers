@@ -309,7 +309,7 @@ void dump_errs(char*** info, int suc, int amount_trans, FILE *fp)
 			char walker = '-';
 			while(walker == ' ')
 			{
-				fprintf(fp, "%c", data[j][walker]);
+				fprintf(fp, "%c", data[j][index]);
 				walker++;
 			}
 			fprintf(fp, "\n");

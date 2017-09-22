@@ -271,3 +271,78 @@ void dump_accs(account** reg, int amount_acco, FILE* fp)
 		fprintf(fp, "%s,%d\n", reg[i]->code, reg[i]->balance);
 	}
 }
+
+/*
+RECIBO
+
+v d BBB-SSS-CCCCCC BBB-SSS-CCCCCC $$$$$$ e/f/i
+v r SSS BBB-SSS-CCCCCC $$$$$$ e/f/i
+*/
+
+void dump_errs(char*** info, int suc, int amount_trans, FILE *fp)
+{
+	fprintf(fp, "Tipo de Error,Numero de Cuenta,Saldo Previo a la Transaccion,Monto que se quiso retirar\n");
+
+	char** data = *info;
+	for (int j=0; j<amount_trans; j++)
+	{
+		if (data[j][2] == 'd')
+		{
+			if (data[j][41] == 'f')
+			{
+				fprintf(fp, "1,");
+			}
+			else if (data[j][41] == 'i')
+			{
+				fprintf(fp, "2,");
+			}
+			else
+			{
+				continue;
+			}
+			for (int i=4; i<18; i++)
+			{
+				fprintf(fp, "%c", data[j][i]);
+			}
+			fprintf(fp, ",saldo_anterior,");
+			int index = 34;
+			char walker = '-';
+			while(walker == ' ')
+			{
+				fprintf(fp, "%c", data[j][walker]);
+				walker++;
+			}
+			fprintf(fp, "\n");
+		}
+		
+		else
+		{
+			if (data[j][30] == 'f')
+			{
+				fprintf(fp, "1,");
+			}
+			else if (data[j][30] == 'i')
+			{
+				fprintf(fp, "2,");
+			}
+			else
+			{
+				continue;
+			}
+			for (int i=8; i<22; i++)
+			{
+				fprintf(fp, "%c", data[j][i]);
+			}
+			fprintf(fp, ",saldo_anterior,");
+			int index = 23;
+			char walker = data[j][index];
+			while(walker != ' ')
+			{
+				fprintf(fp, "%c", walker);
+				index++;
+				walker = data[j][index];
+			}
+			fprintf(fp, "\n");
+		}
+	}
+}

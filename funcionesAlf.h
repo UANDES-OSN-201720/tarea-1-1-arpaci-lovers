@@ -11,5 +11,6 @@ char* reach_input(char** input, int argumento);
 int lenght_transaction(char t);
 void dump(char*** info, int suc, int amount_trans, FILE *fp);
 void dump_accs(account** reg, int amount_acco, FILE* fp);
+void dump_errs(char*** info, int suc, int amount_trans, FILE *fp);
 
 #endif

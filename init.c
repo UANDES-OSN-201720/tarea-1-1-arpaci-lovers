@@ -1,6 +1,5 @@
 #include "init.h"
-#include "funcionesAlf.h"
-#include "pipe_handler.h"
+
 
 pthread_mutex_t pipes_m = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t total_branches_m = PTHREAD_MUTEX_INITIALIZER;
@@ -58,6 +57,7 @@ void* init(void* args)
 
   
   pid_t pid_branch = fork();
+  //printf("%d\n", pid_branch);
   
   if (pid_branch > 0) //Proceso Matriz
   {
@@ -75,7 +75,6 @@ void* init(void* args)
 		char* branch_accounts = reach_input(&commandBuffer, 1);
 		char* p;
 		int ba = strtol(branch_accounts, &p, 10);
-		
 		pthread_mutex_lock(&accounts_codes_m);
 		*accounts_codes = realloc(*accounts_codes, sizeof(*accounts_codes)+ba);
 		pthread_mutex_unlock(&accounts_codes_m);
@@ -107,7 +106,7 @@ void* init(void* args)
     printf("En el hijo %d\n", getpid());
     
     char* readbuffer = malloc(sizeof(char)*80); // buffer para lectura desde pipe
-    
+
     pthread_mutex_lock(&total_branches_m);
     int branch_position = *total_branches - 1;
     pthread_mutex_unlock(&total_branches_m);

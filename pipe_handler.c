@@ -11,16 +11,17 @@ void* main_office_comunication(void* args)
 	printf("en el pipe handler\n");
   char* readbuffer = malloc(sizeof(char)*80);
   moc_args* m = (moc_args*) args;
+
   while (true)
   {
   	pthread_mutex_lock(&total_branches_m);
-    for (int i=0; i<*(m->total_branches); i++)
+    for (int i=0; i<m->total_branches; i++)
     {
     
       int position = i*2+1;
       
       pthread_mutex_lock(&pipes_m);
-      read(*(m->pipes)[position][0], readbuffer, strlen(readbuffer));
+      read(m->pipes[position][0], readbuffer, strlen(readbuffer));
       pthread_mutex_unlock(&pipes_m);
       
       
@@ -41,7 +42,7 @@ void* main_office_comunication(void* args)
         int random = strtol(random_account, &pointer, 10);
         
         pthread_mutex_lock(&total_accounts_m);
-        if (random >= *(m->total_accounts))
+        if (random >= m->total_accounts)
         {
           state[0] = 'i';
           destiny = malloc(sizeof(char)*15);
@@ -50,8 +51,8 @@ void* main_office_comunication(void* args)
         else
         {
         	pthread_mutex_lock(&accounts_codes_m);
-          destiny = malloc(strlen(*(m->accounts_codes)[random]));
-          destiny = *(m->accounts_codes)[random];
+          destiny = malloc(strlen(m->accounts_codes[random]));
+          destiny = m->accounts_codes[random];
           pthread_mutex_unlock(&accounts_codes_m);
           if (destiny[0] == 'x')
           {
@@ -63,15 +64,15 @@ void* main_office_comunication(void* args)
         char* message = malloc(10+strlen(origin)+strlen(destiny)+strlen(ammount)+strlen(id));
         sprintf(message, "%c %s %s %s %s %s %s", type, operation, origin, destiny, ammount, state, id);
         
-        for (int j=0; j<*(m->total_accounts);j++)
+        for (int j=0; j<m->total_accounts;j++)
         {
-          write(*(m->pipes)[j*2][1], message, strlen(message));
+          write(m->pipes[j*2][1], message, strlen(message));
         }
       }
     
       if (type == 'v')
       {
-        write(*(m->pipes)[position][1], readbuffer, strlen(readbuffer));
+        write(m->pipes[position][1], readbuffer, strlen(readbuffer));
       }
     }
     pthread_mutex_unlock(&total_branches_m);

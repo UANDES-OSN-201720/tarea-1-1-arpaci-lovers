@@ -3,6 +3,10 @@
 
 #include "funcionesAlf.h"
 #include "terminal.h"
+#include "pipe_handler.h"
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 pthread_mutex_t pipes_m;
 pthread_mutex_t total_branches_m;

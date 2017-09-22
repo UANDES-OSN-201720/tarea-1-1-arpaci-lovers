@@ -36,14 +36,16 @@ int main(int argc, char** argv)
   const int bankId = getpid() % 1000;
   printf("Bienvenido a Banco '%d'\n", bankId);
   
-  moc_args ma;
-  ma.total_branches = &total_branches;
-  ma.pipes = &pipes;
-  ma.accounts_codes = &accounts_codes;
-  ma.total_accounts = &total_accounts;
+  moc_args* ma = malloc(sizeof(moc_args));
+  ma->total_branches = total_branches;
+  ma->pipes = pipes;
+  ma->accounts_codes = accounts_codes;
+  ma->total_accounts = total_accounts;
+
+  printf("%d\n", ma->total_accounts);
   
   pthread_t pipe_handler_t;
-  pthread_create(&pipe_handler_t, NULL, main_office_comunication, &ma);
+  pthread_create(&pipe_handler_t, NULL, main_office_comunication, ma);
 
   while (true) {
     printf(">>");
@@ -56,7 +58,6 @@ int main(int argc, char** argv)
 
     if (!strncmp("quit", commandBuf, strlen("quit"))) 
     {
-        printf("In main->quit\n");
         free(pipes);
         free(branches);
         free(accounts_codes);
@@ -73,20 +74,18 @@ int main(int argc, char** argv)
     }
     else if (!strncmp("init", commandBuf, strlen("init"))) 
     {
-      printf("In main->init\n");
-      
       pthread_t init_thread;
-      init_args ia;
-      
-      ia.bankId = bankId;
-      ia.total_branches = &total_branches;
-      ia.branches = &branches;
-      ia.pipes = &pipes;
-      ia.total_accounts = &total_accounts;
-      ia.commandBuffer = commandBuf;
- 			ia.accounts_codes = &accounts_codes;   
+      init_args* ia = malloc(sizeof(init_args));
+
+      ia->bankId = bankId;
+      ia->total_branches = &total_branches;
+      ia->branches = &branches;
+      ia->pipes = &pipes;
+      ia->total_accounts = &total_accounts;
+      ia->commandBuffer = commandBuf;
+ 			ia->accounts_codes = &accounts_codes;   
     
-      pthread_create(&init_thread, NULL, init, &ia);
+      pthread_create(&init_thread, NULL, init, ia);
       /*
       // Proceso de sucursal
       else if (!sucid) {

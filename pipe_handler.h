@@ -6,10 +6,10 @@
 
 typedef struct
 {
-  int* total_branches;
-  int*** pipes;
-  char*** accounts_codes;
-  int* total_accounts;
+  int total_branches;
+  int** pipes;
+  char** accounts_codes;
+  int total_accounts;
 } moc_args;
 
 void* main_office_comunication(void* args);

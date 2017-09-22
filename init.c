@@ -76,7 +76,9 @@ void* init(void* args)
 		char* p;
 		int ba = strtol(branch_accounts, &p, 10);
 		pthread_mutex_lock(&accounts_codes_m);
-		*accounts_codes = realloc(*accounts_codes, sizeof(*accounts_codes)+ba);
+				printf("antes del realloc\n");
+		*accounts_codes = realloc(*accounts_codes, sizeof(*accounts_codes)*(ba+(*total_accounts)));
+				printf("despues del realloc\n");
 		pthread_mutex_unlock(&accounts_codes_m);
 		
 		int branchId = pid_branch % 1000;

@@ -23,6 +23,7 @@ void* main_office_comunication(void* args)
       read(*(m->pipes)[position][0], readbuffer, strlen(readbuffer));
       pthread_mutex_unlock(&pipes_m);
       
+      
       if (readbuffer[0] == 'n') continue;
       
       char* operation = reach_input(&readbuffer, 1);
@@ -31,6 +32,7 @@ void* main_office_comunication(void* args)
       char* destiny;
       char* state = reach_input(&readbuffer, 5);
       char* ammount = reach_input(&readbuffer, 4);
+      char* id = reach_input(&readbuffer, 6);
       
       if (type == 'i')
       {
@@ -58,8 +60,8 @@ void* main_office_comunication(void* args)
         }
         pthread_mutex_unlock(&total_accounts_m);
         
-        char* message = malloc(9+strlen(origin)+strlen(destiny)+strlen(ammount));
-        sprintf(message, "%c %s %s %s %s %s", type, operation, origin, destiny, ammount, state);
+        char* message = malloc(10+strlen(origin)+strlen(destiny)+strlen(ammount)+strlen(id));
+        sprintf(message, "%c %s %s %s %s %s %s", type, operation, origin, destiny, ammount, state, id);
         
         for (int j=0; j<*(m->total_accounts);j++)
         {

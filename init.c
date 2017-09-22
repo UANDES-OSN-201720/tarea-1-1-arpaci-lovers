@@ -7,6 +7,9 @@ pthread_mutex_t total_branches_m = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t branches_m = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t total_accounts_m = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t accounts_codes_m = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t transactions_m = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t transactions_id_m = PTHREAD_MUTEX_INITIALIZER;
+
 
 void* init(void* args)
 {
@@ -109,22 +112,20 @@ void* init(void* args)
     int branch_position = *total_branches - 1;
     pthread_mutex_unlock(&total_branches_m);
     
-    //pthread_mutex_t total_transactions_m = PTHREAD_MUTEX_INITIALIZER;
-    //int total_transactions = 0;
+    pthread_mutex_t transactions_id_m = PTHREAD_MUTEX_INITIALIZER;
+    int* transactions_id = malloc(sizeof(int));
+    *transactions_id = 0;
     
-    //pthread_mutex_t transactions_m = PTHREAD_MUTEX_INITIALIZER;
-    //char** transactions = malloc(sizeof(char));
+    pthread_mutex_t transactions_m = PTHREAD_MUTEX_INITIALIZER;
+    char** transactions = malloc(sizeof(char));
  
     read((*pipes)[branch_position][0], readbuffer, sizeof(readbuffer));
-    //printf("%s - %d\n", readbuffer, (int)strlen(readbuffer));
 
     str_accounts = reach_input(&readbuffer, 0);
     char_terminals = reach_input(&readbuffer, 1);
     
     int n_accounts = atoi(str_accounts);
     int n_terminals = *char_terminals - '0';
-    
-    printf("cuentas: %d | terminales: %d\n", n_accounts, n_terminals);
     
     pthread_mutex_t accounts_m = PTHREAD_MUTEX_INITIALIZER;
     account* accounts = malloc(sizeof(account)*n_accounts);
@@ -133,12 +134,26 @@ void* init(void* args)
     create_accounts(n_accounts, bankId, getpid(), &accounts);
     pthread_mutex_unlock(&accounts_m);
 		
+		pthread_mutex_lock(&total_accounts_m);
+		pthread_mutex_lock(&transactions_m);
+		pthread_mutex_lock(&transactions_id_m);
+		
+		ter_args* ta = malloc(sizeof(ter_args));
+		ta->n_accounts = n_accounts;
+		ta->total_accounts = total_accounts;
+		ta->transactions = &transactions;
+		ta->pipe = &(*pipes)[branch_position*2 + 1];
+		ta->transactions_id = transactions_id;
+
+		pthread_mutex_unlock(&transactions_id_m);
+		pthread_mutex_unlock(&transactions_m);
+		pthread_mutex_unlock(&total_accounts_m);
 
     for (int i=0; i<n_terminals; ++i)
     {
-      ;
+      pthread_t terminal_thread;
+      pthread_create(&terminal_thread, NULL, terminal, ta); 
     }
-
   }
   return NULL;
 }

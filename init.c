@@ -75,10 +75,9 @@ void* init(void* args)
 		char* branch_accounts = reach_input(&commandBuffer, 1);
 		char* p;
 		int ba = strtol(branch_accounts, &p, 10);
+		
 		pthread_mutex_lock(&accounts_codes_m);
-				printf("antes del realloc\n");
 		*accounts_codes = realloc(*accounts_codes, sizeof(*accounts_codes)*(ba+(*total_accounts)));
-				printf("despues del realloc\n");
 		pthread_mutex_unlock(&accounts_codes_m);
 		
 		int branchId = pid_branch % 1000;
@@ -100,6 +99,8 @@ void* init(void* args)
 			pthread_mutex_unlock(&accounts_codes_m);
 			
 		}
+		
+		printf("llega al final del padre\n");
   
   
   }
@@ -120,16 +121,26 @@ void* init(void* args)
     pthread_mutex_t transactions_m = PTHREAD_MUTEX_INITIALIZER;
     char** transactions = malloc(sizeof(char));
  
+ 		printf("antes del read\n");
+ 
     read((*pipes)[branch_position][0], readbuffer, sizeof(readbuffer));
+    
+    printf("hi\n");
 
     str_accounts = reach_input(&readbuffer, 0);
     char_terminals = reach_input(&readbuffer, 1);
     
+    printf("hi1\n");
+    
     int n_accounts = atoi(str_accounts);
     int n_terminals = *char_terminals - '0';
     
+    printf("hi2\n");
+    
     pthread_mutex_t accounts_m = PTHREAD_MUTEX_INITIALIZER;
     account* accounts = malloc(sizeof(account)*n_accounts);
+
+		printf("antes de crear las cuentas\n");
 
     pthread_mutex_lock(&accounts_m);
     create_accounts(n_accounts, bankId, getpid(), &accounts);

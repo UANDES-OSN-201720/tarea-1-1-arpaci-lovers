@@ -86,35 +86,7 @@ int main(int argc, char** argv)
  			ia->accounts_codes = &accounts_codes;   
     
       pthread_create(&init_thread, NULL, init, ia);
-      /*
-      // Proceso de sucursal
-      else if (!sucid) {
-        int sucId = getpid() % 1000;
-        printf("Hola, soy la sucursal '%d'\n", sucId);
-        while (true) {
-          // 100 milisegundos...
-          int bytes = read(bankPipe[0], readbuffer, sizeof(readbuffer));
-          printf("Soy la sucursal '%d' y me llego mensaje '%s' de '%d' bytes.\n",
-            sucId, readbuffer, bytes);
-          
-          // Usar usleep para dormir una cantidad de microsegundos
-          // usleep(100000);
-
-          // Cerrar lado de lectura del pipe
-          close(bankPipe[0]);
-
-          // Para terminar, el proceso hijo debe llamar a _exit,
-          // debido a razones documentadas aqui:
-          // https://goo.gl/Yxyuxb
-          _exit(EXIT_SUCCESS);
-        }
       
-      // error
-      }
-      else {
-        fprintf(stderr, "Error al crear proceso de sucursal!\n");
-        return (EXIT_FAILURE);
-      }*/
     }
     else {
       fprintf(stderr, "Comando no reconocido.\n");

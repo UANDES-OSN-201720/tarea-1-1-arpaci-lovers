@@ -125,35 +125,24 @@ int digits(int n)
 	
 	while (true)
 	{
-		int k = n/pow(10,counter);
-		printf("k: %d\n", k);
 		if (n/pow(10,counter) < 1) break;
 		else counter++;
 	}
-	printf("counter: %d\n", counter);
 	return counter;
 }
 
 char* create_transaction(int amount_accounts, account** accounts, int random, int* pipe, int* transactions_id)
 {
-	printf("hi0\n");
 	//pthread_mutex_lock(&transactions_id_m);
-	printf("hi1\n");
-	printf("transactions_id: %d\n", *transactions_id);
 	int id_digits = digits(*transactions_id);
-	printf("id_digits: %d\n", id_digits);
 	//pthread_mutex_unlock(&transactions_id_m);
 
-	printf("Hi\n");
 	int account_to_be_used = random_number(0,amount_accounts-1);
 	char type = choose_task();
-	printf("Hi2\n");
 	//pthread_mutex_lock(&transactions_id_m);
 	char* str_id = malloc(sizeof(char)*id_digits);
-	printf("Hi3\n");
 	sprintf(str_id, "%d", *transactions_id);
 	char* result = malloc(sizeof(char)*(lenght_transaction(type)+id_digits));
-	printf("Hi4\n");
 	//pthread_mutex_unlock(&transactions_id_m);
 	
 	
@@ -212,7 +201,6 @@ char* create_transaction(int amount_accounts, account** accounts, int random, in
 	
 	result[iterator] = '\0';
 	
-	printf("transaction: %s\n", result);
 
 	write(pipe[1], result, strlen(result));
 

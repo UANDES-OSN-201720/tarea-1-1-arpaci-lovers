@@ -1,29 +1,30 @@
-												Informe Tarea 1 parte 1 arpaci lovers
+												Informe Tarea 1 parte 2 arpaci lovers
 
 
 1. Funciones principales
 
-	Dentro de los distintos archivos .h que hicimos se presentan diferentes funciones que reciben los structs que componen la escencia de
-	las cuentas y retornan un string con la información necesaria para transmitir de una sucursal a otra el mensaje que simboliza una transacción.
-	Además se presentan funciones que decodifican estos strings en la casa matriz y permiten comunicar el mensaje a la sucursal apropiada a travez de pipes.
-	Una vez que se crea la primera cuenta se pretendia que se comenzaran a crear transacciones libremente y que estas se codificaran y fueran
-	transmitidas por los pipes.
-
+	El main() es el primer proceso en ejecutar, en el cual, cuando se utiliza el }
+	comando "init", se crea un thread utilizando la función init(), en el cual se 
+	crea la nueva sucursal, es decir, un nuevo proceso.
+	Este nuevo proceso -la sucursal- crea sus cuentas con create_accounts() y crea
+	sus terminales, siendo cada una un thread nuevo que utiliza la función terminal().
+	Por otro lado, la casa matriz maneja la comunicación entre ella y las sucursales
+	utilizando un thread a parte, el pipe_handler().
+	
 
 2. Problemas
 
-	Tuvimos varios problemas en crear un tipo de codificación util para poder incluir toda la información necesaria dentro del buffer para ser enviada a otro
-	proceso. Los pipes que implementamos no funcionan ya que la información que deberian recibir no esta llegando de manera apropiada, por lo que todo el tema 
-	de las transacciones no funciona. Sabemos que este era el fin de la tarea, y notamos que tenemos un entendimiento mucho más debil de lo que creiamos
-	respcto a la aplicación de lo aprendido en clases, por lo que comenzaremos la tarea desde cero para poder entregar una buena segunda parte.
+	Sabemos que el thread init() se queda atascado (no se cae) cuando se crea una
+	segunda sucursal. Esto es debido, probablemente, a un mal uso de locks. Debido
+	a esto, no se crean las cuentas de la nueva sucursal ni sus terminales, aunque
+	el proceso de casa matriz sigue funcionando.
 		
 		
-3. Complicaciones:
+3. Complicaciones
 
-
-	No implementamos el uso de pipes ya que no pudimos entender bien el funcionamiento de estos y la estructura de codigo necesaria para que estos funcionaran.
-	Debido a esto las transacciones no se realizan y el objetivo de la tarea no fue cumplido. Todas nuestras funciones de codificación y decodoficación estaban
-	hechas para llegar ser enviadas por los pipes, pero nunca pudimos utilizarlas ya que no tenian lugar en nuestro main sin lo otro. Más que nada esto de debio 
-	a falta de tiempo, pero por sobre todo por falta de coordinación por parte del grupo. Esperamos poder mejorar para la proxima entrega. 
+	Debido a problemas de tiempo (considerando que tuvimos que hacer la entrega 
+	desde cero), no implementamos la utilización de comandos list(), dump(), 
+	dump_errs() y dump_accs(), a pesar de que las funciones correspondientes están 
+	creadas.
 
 

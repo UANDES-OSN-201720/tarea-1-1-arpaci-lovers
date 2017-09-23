@@ -61,7 +61,6 @@ void* init(void* args)
   
   if (pid_branch > 0) //Proceso Matriz
   {
-    printf("En el padre %d con hijo %d\n", bankId, pid_branch);
   
 		pthread_mutex_lock(&branches_m);
 		pthread_mutex_lock(&total_branches_m);
@@ -99,14 +98,11 @@ void* init(void* args)
 			pthread_mutex_unlock(&accounts_codes_m);
 			
 		}
-		
-		printf("llega al final del padre\n");
   
   
   }
   if (!pid_branch) //Proceso Sucursal
   {
-    printf("En el hijo %d\n", getpid());
     
     char* readbuffer = malloc(sizeof(char)*80); // buffer para lectura desde pipe
 
@@ -121,26 +117,17 @@ void* init(void* args)
     pthread_mutex_t transactions_m = PTHREAD_MUTEX_INITIALIZER;
     char** transactions = malloc(sizeof(char));
  
- 		printf("antes del read\n");
- 
     read((*pipes)[branch_position][0], readbuffer, sizeof(readbuffer));
     
-    printf("hi\n");
 
     str_accounts = reach_input(&readbuffer, 0);
     char_terminals = reach_input(&readbuffer, 1);
     
-    printf("hi1\n");
-    
     int n_accounts = atoi(str_accounts);
     int n_terminals = *char_terminals - '0';
     
-    printf("hi2\n");
-    
     pthread_mutex_t accounts_m = PTHREAD_MUTEX_INITIALIZER;
     account* accounts = malloc(sizeof(account)*n_accounts);
-
-		printf("antes de crear las cuentas\n");
 
     pthread_mutex_lock(&accounts_m);
     create_accounts(n_accounts, bankId, getpid(), &accounts);
